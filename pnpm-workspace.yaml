@@ -1,0 +1,8 @@
+packages:
+  - kit
+  - apps/*
+  - phantom-handset
+
+# Packages allowed to run install scripts (esbuild is needed by Vite and vitest)
+allowBuilds:
+  esbuild: true

@@ -1,0 +1,22 @@
+{
+  "name": "ghost-line-kit",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter phantom-handset dev",
+    "build": "pnpm -r --if-present build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm typecheck",
+    "test": "vitest run",
+    "test:pbt": "FC_NUM_RUNS=1000 vitest run --passWithNoTests pbt"
+  },
+  "devDependencies": {
+    "fast-check": "^4.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
+  }
+}
