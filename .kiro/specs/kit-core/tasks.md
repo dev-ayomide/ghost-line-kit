@@ -40,7 +40,7 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
   - `detectEncoding(text: string): Encoding` returns `'GSM-7'` if every character is in `GSM7_CHARS`, otherwise `'UCS-2'`
   - Export `type Encoding = 'GSM-7' | 'UCS-2'`
   - _Requirements: 4.1, 4.2, 4.3_
-  - [ ]* 2.1a Write PBT for encoding detection in `kit/test/encoding.pbt.test.ts`
+  - [ ] 2.1a Write PBT for encoding detection in `kit/test/encoding.pbt.test.ts`
     - **Property 1: Encoding detection correctness** — for any string, `detectEncoding` returns `'GSM-7'` iff every character is in the GSM-7 alphabet, else `'UCS-2'`
     - Generator: two branches — (a) strings of only GSM-7 chars, (b) strings with at least one non-GSM-7 char (emoji, CJK, `{}|^~\`)
     - **Validates: Requirements 4.1, 4.2, 4.3**
@@ -53,15 +53,15 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
   - Concatenating returned segments yields the original text
   - Import `LIMITS` from `limits.ts` for segment sizes; do not hardcode limits
   - _Requirements: 5.1, 5.2, 5.5, 5.6_
-  - [ ]* 2.2a Write PBT for segment limit compliance in `kit/test/split.pbt.test.ts`
+  - [ ] 2.2a Write PBT for segment limit compliance in `kit/test/split.pbt.test.ts`
     - **Property 2: Segment limit compliance** — every segment from `pureSplit` is within the char limit for the detected encoding (160/70 single, 153/67 concat)
     - Generator: random strings of varying lengths, including just under/over the single-segment boundary; constrain non-whitespace token lengths to the segment limit
     - **Validates: Requirements 5.1, 5.3**
-  - [ ]* 2.2b Write PBT for split round-trip in `kit/test/split.pbt.test.ts`
-    - **Property 3: Split round-trip** — for messages producing ≤3 segments, concatenating segments yields the original text exactly
-    - Generator: strings whose length yields ≤3 segments; include leading/trailing whitespace, consecutive spaces, single-char words, mixed GSM-7/UCS-2
+  - [ ] 2.2b Write PBT for split round-trip in `kit/test/split.pbt.test.ts`
+    - **Property 3: Split round-trip** — for any message, concatenating the resulting segments yields the original text exactly (pureSplit never truncates)
+    - Generator: strings of any length; include leading/trailing whitespace, consecutive spaces, single-char words, mixed GSM-7/UCS-2
     - **Validates: Requirements 5.4**
-  - [ ]* 2.2c Write PBT for no atomic unit split in `kit/test/split.pbt.test.ts`
+  - [ ] 2.2c Write PBT for no atomic unit split in `kit/test/split.pbt.test.ts`
     - **Property 4: No atomic unit split across segments** — no segment boundary falls inside a word, number, currency amount, or phone number
     - Generator: strings of words, numbers (`1,500`, `3.14`), currency (`₦1,500`), and phone numbers (`+2348051234567`) separated by single spaces; constrain each token to the segment limit
     - **Validates: Requirements 5.2, 5.5**
@@ -72,7 +72,7 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
   - Return `SplitResult` with `segments`, `truncated`, `encoding`, `segmentCount`
   - Export `interface SplitResult` from this file
   - _Requirements: 5.7, 5.8_
-  - [ ]* 2.3a Write example tests for the summary step in `kit/test/split.test.ts`
+  - [ ] 2.3a Write example tests for the summary step in `kit/test/split.test.ts`
     - Test (a): message producing exactly 3 segments (no summary triggered, `truncated: false`)
     - Test (b): message producing 4 segments (summary triggered, leading portion emitted, `" Reply MORE"` appended, `truncated: true`)
     - Test (c): message with a currency amount at the truncation boundary (amount not split across the boundary)
@@ -86,11 +86,11 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
   - Import `LIMITS` for screen cap and max options per screen
   - Export `interface MenuOption`, `interface MenuConfig` from this file
   - _Requirements: 6.1, 6.2, 6.3, 6.5, 6.6_
-  - [ ]* 2.4a Write PBT for menu screen character limit in `kit/test/menu.pbt.test.ts`
+  - [ ] 2.4a Write PBT for menu screen character limit in `kit/test/menu.pbt.test.ts`
     - **Property 5: Menu screen character limit** — every screen from `renderMenuScreens` is ≤160 characters
     - Generator: arrays of `MenuOption` with random labels (1–50 chars); include 1 option, 5 options, and >5 options (multi-screen)
     - **Validates: Requirements 6.2, 6.4**
-  - [ ]* 2.4b Write PBT for no atomic unit split across USSD screens in `kit/test/menu.pbt.test.ts`
+  - [ ] 2.4b Write PBT for no atomic unit split across USSD screens in `kit/test/menu.pbt.test.ts`
     - **Property 6: No atomic unit split across USSD screens** — no screen boundary falls inside a word, number, currency amount, or phone number
     - Generator: `MenuOption` arrays whose labels contain atomic units, with label lengths pushing against the 160-char cap
     - **Validates: Requirements 6.3**
@@ -103,7 +103,7 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
 - [ ] 2.5 Implement `maskPhoneNumber` in `kit/src/format/phone.ts`
   - `maskPhoneNumber(phone: string): string` — if more than 7 digits: keep first 3 and last 4 digits visible, mask the rest with `*`; if 7 or fewer digits: keep only last 2 visible; preserve non-digit characters (like `+`) as-is
   - _Requirements: 14.1, 14.2, 14.3_
-  - [ ]* 2.5a Write PBT for phone number masking in `kit/test/phone.pbt.test.ts`
+  - [ ] 2.5a Write PBT for phone number masking in `kit/test/phone.pbt.test.ts`
     - **Property 9: Phone number masking** — for any phone string, preserves only first 3 and last 4 digits when >7 digits, only last 2 when ≤7 digits; no other original digits appear; non-digit chars preserved
     - Generator: two branches — (a) strings with 8–20 digits mixed with optional `+` prefix and separators, (b) strings with 1–7 digits
     - **Validates: Requirements 14.1, 14.2, 14.3**
@@ -137,7 +137,7 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
   - Export `SessionState`, `SessionStatus`, `SessionEvent` types from this file
   - Import `LIMITS.ussd.sessionTimeoutMs` for default timeout (callers may override)
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
-  - [ ]* 3.2a Write PBT for session state machine in `kit/test/session.pbt.test.ts`
+  - [ ] 3.2a Write PBT for session state machine in `kit/test/session.pbt.test.ts`
     - **Property 7: Session state machine correctness** — for all event sequences: (a) after 180s+ inactivity, status is `timed-out` and stored state equals state at last inbound; (b) next inbound on timed-out session resumes to `active` with preserved state; (c) after explicit end, session not retrievable; (d) session never `active` after 180s+ since last inbound
     - Generator: sequences of events (`inbound`, `advance` 0–300000ms, `end`, `check`) applied with a `TestClock`; assert applicable sub-property after each event
     - **Validates: Requirements 8.2, 8.3, 8.4, 8.6**
@@ -184,7 +184,7 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
   - `serializeIntent(intent: Intent): string` — serialises to JSON string
   - `parseIntent(json: string): Intent` — parses from JSON string, validating with `IntentSchema`
   - _Requirements: 9.1, 9.3, 9.4_
-  - [ ]* 5.1a Write PBT for intent serialization round-trip in `kit/test/intent.pbt.test.ts`
+  - [ ] 5.1a Write PBT for intent serialization round-trip in `kit/test/intent.pbt.test.ts`
     - **Property 8: Intent serialization round-trip** — serializing an Intent to JSON and parsing it back produces an Intent with the same name, parameter names and values, and raw message
     - Generator: `fc.record({ name: fc.string(), parameters: fc.dictionary(fc.string(), fc.oneof(fc.string(), fc.integer(), fc.boolean())), rawMessage: fc.string() })`
     - **Validates: Requirements 9.3, 9.4**
@@ -286,7 +286,7 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
   - Import `LIMITS.rateLimit` for default window and max values
   - Export `RateLimitState`, `RateLimitConfig` types from this file
   - _Requirements: 16.1, 16.2, 16.3_
-  - [ ]* 7.2a Write PBT for rate limit correctness in `kit/test/rate-limit.pbt.test.ts`
+  - [ ] 7.2a Write PBT for rate limit correctness in `kit/test/rate-limit.pbt.test.ts`
     - **Property 10: Rate limit correctness** — `checkRateLimit` allows a message iff the count within `windowMs` is below max (10); when all prior timestamps expired, next message is allowed and new state contains only the new timestamp
     - Generator: rate-limit states with 0–15 timestamps at varying ages relative to `nowMs` (some within window, some expired), combined with current `nowMs`
     - **Validates: Requirements 16.1, 16.2, 16.3**

@@ -103,7 +103,7 @@ Because the format and session logic are pure functions and a state machine, the
 1. WHEN a message exceeds the single-segment capacity, THE Format_Module SHALL split it into concatenated segments respecting the per-encoding segment limit.
 2. THE Format_Module SHALL never split an Atomic_Unit across two segments.
 3. **PBT** WHEN the Pure_Splitter splits a message into segments, every segment SHALL be within the character limit for the detected encoding (GSM-7 or UCS-2, single or concatenated).
-4. **PBT** WHEN the Pure_Splitter splits a message and no summary truncation is applied, concatenating the resulting segments SHALL yield the original message text.
+4. **PBT** WHEN the Pure_Splitter splits a message, concatenating the resulting segments SHALL yield the original message text.
 5. **PBT** WHEN the Pure_Splitter splits a message, no segment boundary SHALL fall inside a word, number, currency amount, or Phone_Number.
 6. IF an Atomic_Unit exceeds the per-encoding segment character limit, THEN THE Format_Module SHALL split that unit at a segment-character boundary.
 
@@ -258,7 +258,7 @@ The following correctness properties are verified with fast-check. Each maps to 
 
 2. **Every segment is within its limit** (Requirement 5, Criterion 3): WHEN the Pure_Splitter splits a message into segments, every segment SHALL be within the character limit for the detected encoding (GSM-7: 160 single / 153 concatenated; UCS-2: 70 single / 67 concatenated).
 
-3. **Concatenating segments gives back the original text** (Requirement 5, Criterion 4): WHEN the Pure_Splitter splits a message and no summary truncation is applied, concatenating the resulting segments SHALL yield the original message text (round-trip property). This property does not apply to messages that trigger the summary step (criterion 7), where the leading portion is intentionally truncated.
+3. **Concatenating segments gives back the original text** (Requirement 5, Criterion 4): WHEN the Pure_Splitter splits a message, concatenating the resulting segments SHALL yield the original message text (round-trip property). The Pure_Splitter never truncates, so this property holds for all inputs regardless of segment count; truncation only occurs in the separate summary step (criterion 7).
 
 4. **USSD session timeout, resume, and end behave correctly** (Requirement 8, Criterion 6): FOR ALL sequences of session events (inbound message, clock advance, explicit end) applied to a USSD session, the test uses an injected clock (Requirement 8, Criterion 5) for deterministic time advancement and asserts: (a) after 180s or more of inactivity the status SHALL be timed-out and the stored conversation state SHALL equal the state at the last inbound message; (b) the next inbound message on a timed-out session SHALL resume it to active with exactly the preserved state; (c) after an explicit end the session record SHALL no longer be retrievable; (d) a session SHALL never be active once 180s or more have passed since its last inbound message.
 

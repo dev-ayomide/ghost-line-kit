@@ -504,11 +504,11 @@ Generator: random strings of varying lengths, including strings just under and j
 
 ### Property 3: Split round-trip
 
-*For any* message text whose segment count from `pureSplit` does not exceed `maxPreferredSegments` (3), concatenating the resulting segments SHALL yield the original message text exactly.
+*For any* message text, concatenating the resulting segments SHALL yield the original message text exactly. `pureSplit` never truncates, so this property holds for all inputs regardless of segment count.
 
 **Validates: Requirements 5.4**
 
-Generator: random strings whose length is such that `pureSplit` produces at most 3 segments. Include strings with leading/trailing whitespace, multiple consecutive spaces, single-character words, and mixed GSM-7/UCS-2 content.
+Generator: random strings of any length (including strings that produce 5+, 10+, or more segments). Include strings with leading/trailing whitespace, multiple consecutive spaces, single-character words, and mixed GSM-7/UCS-2 content.
 
 ### Property 4: No atomic unit split across segments
 
@@ -627,7 +627,7 @@ PBT test files use the `*.pbt.test.ts` naming convention so `pnpm test:pbt` can 
 |---|---|---|---|
 | `kit/test/encoding.pbt.test.ts` | 1: Encoding detection | `detectEncoding` | GSM-7 charset generator + non-GSM-7 generator |
 | `kit/test/split.pbt.test.ts` | 2: Segment limit compliance | `pureSplit` | Random strings, token lengths ≤ segment limit |
-| `kit/test/split.pbt.test.ts` | 3: Split round-trip | `pureSplit` | Strings producing ≤3 segments, varied whitespace |
+| `kit/test/split.pbt.test.ts` | 3: Split round-trip | `pureSplit` | Strings of any length, varied whitespace |
 | `kit/test/split.pbt.test.ts` | 4: No atomic unit split | `pureSplit` | Words, numbers, currency, phone numbers |
 | `kit/test/menu.pbt.test.ts` | 5: Menu screen limit | `renderMenuScreens` | Random MenuOption arrays |
 | `kit/test/menu.pbt.test.ts` | 6: No atomic unit split (USSD) | `renderMenuScreens` | Labels with atomic units at screen boundary |
