@@ -185,7 +185,7 @@ Each adapter also exports a zod schema for its webhook payload and an optional `
 **SmsAdapter** (`channels/sms-adapter.ts`):
 - Sends SMS via the Africa's Talking REST API using `fetch`. Constructor takes `{ username, apiKey, shortcode?, webhookSecret? }`.
 - `send()` POSTs form-encoded data to `https://api.africastalking.com/version1/messaging`. Returns `{ ok, messageId?, error? }`. If the API returns an error, returns `{ ok: false, error }` and preserves prior state.
-- `parseWebhook()` validates the inbound SMS payload with zod, checks the webhook secret (shared secret in a header or query parameter), and returns an `InboundMessage` or a `WebhookResult` error.
+- `parseWebhook()` validates the inbound SMS payload with zod, authenticates by comparing the `WEBHOOK_SECRET` query parameter from the callback URL in constant time, and returns an `InboundMessage` or a `WebhookResult` error. Optional IP allowlisting is left to deployment configuration.
 
 **UssdAdapter** (`channels/ussd-adapter.ts`):
 - Handles USSD sessions via Africa's Talking. Same constructor shape as SmsAdapter.
@@ -231,8 +231,8 @@ Each adapter also exports a zod schema for its webhook payload and an optional `
 - `LlmProvider` interface: `{ complete(prompt: string): Promise<string>, classifyIntent(message: string, intentNames: string[]): Promise<Intent> }`.
 
 **BedrockProvider** (`agent/bedrock-provider.ts`):
-- Implements `LlmProvider` using `@aws-sdk/client-bedrock-runtime`. Constructor takes `{ modelId: string, region: string, client?: BedrockRuntimeClient }`. The client is injectable so tests can pass a mock.
-- `complete()` calls the Bedrock `InvokeModel` API and extracts the text from the response.
+- Implements `LlmProvider` using `@aws-sdk/client-bedrock-runtime`. Constructor takes `{ region: string, modelId?: string, client?: BedrockRuntimeClient }`. The `modelId` defaults to `process.env.BEDROCK_MODEL_ID`. The client is injectable so tests can pass a mock.
+- `complete()` calls the Bedrock **Converse API** (`Converse` command), which is model-agnostic so the same code works with any Bedrock-supported model, and extracts the text from the response.
 - `classifyIntent()` prompts the model to return a JSON Intent and parses it with `IntentSchema`. If the model returns an intent name not in `intentNames`, classifies as `'unrecognized'`.
 - If Bedrock returns an error or is unavailable, surfaces a `KitError` to the application layer rather than propagating the raw SDK error.
 
@@ -669,10 +669,11 @@ When a property test finds a counterexample, fast-check shrinks it to a minimal 
 
 ```typescript
 // Regression: pureSplit split "₦1,500" across two segments when the
-// currency amount landed exactly at the 153-char boundary.
+// currency amount landed exactly at the 67-char (UCS-2 concat) boundary.
+// The naira sign ₦ is not in the GSM-7 alphabet, so the encoding is UCS-2.
 it('regression: currency amount at segment boundary', () => {
-  const input = 'word '.repeat(30) + '₦1,500';
-  const segments = pureSplit(input, 'GSM-7');
+  const input = 'word '.repeat(13) + '₦1,500';
+  const segments = pureSplit(input, 'UCS-2');
   expect(segments.some(s => s.includes('₦1,500'))).toBe(true);
 });
 ```
@@ -693,10 +694,10 @@ The following are tested with examples or integration tests, not PBT, because th
 - **Public API encapsulation** (13.1–13.3) — structural/architectural; smoke tests.
 - **Limits constants** (1.1–1.9) — fixed values; smoke tests.
 
-### Open questions
+### Resolved Design Decisions
 
-1. **Africa's Talking webhook authentication mechanism.** The requirements specify "shared secret or IP allowlist." Africa's Talking's exact webhook signature mechanism (header name, format) needs to be verified against their current documentation. The adapter design supports both approaches; the specific header to check is an implementation detail.
+1. **Africa's Talking webhook authentication.** Africa's Talking does not sign webhooks. The adapter authenticates inbound callbacks by requiring a secret token (`WEBHOOK_SECRET` from `.env`) in the callback URL query string, compared in constant time using `crypto.timingSafeEqual`. Optional IP allowlisting is left to deployment configuration (e.g., reverse proxy or security group rules). No Africa's Talking SDK is imported; the REST API is called with `fetch`.
 
-2. **AWS SDK v3 packages.** `@aws-sdk/client-bedrock-runtime` and `@aws-sdk/client-dynamodb` (+ `@aws-sdk/lib-dynamodb`) are new dependencies. They are imported only inside `BedrockProvider` and `DynamoStore`, never in interfaces or public types. Adding them requires updating `kit/package.json`. This should be confirmed before implementation.
+2. **AWS SDK v3 packages.** Approved by the user. `@aws-sdk/client-bedrock-runtime` (for Bedrock Converse API) and `@aws-sdk/client-dynamodb` + `@aws-sdk/lib-dynamodb` (for DynamoDB) are added to `kit/package.json`. They are imported only inside `BedrockProvider` and `DynamoStore`, never in interfaces or public types. Recorded in `.kiro/steering/tech.md`.
 
-3. **Bedrock model invocation format.** The exact request/response format depends on the model ID chosen (e.g., Claude vs. other models). The `BedrockProvider` should handle the model-specific payload format internally and expose only the `LlmProvider` interface.
+3. **Bedrock model invocation format.** The `BedrockProvider` uses the Bedrock **Converse API** (`Converse` command), which is model-agnostic. The model id comes from `BEDROCK_MODEL_ID` (passed to the constructor or read from `process.env.BEDROCK_MODEL_ID`). The same code works with any Bedrock-supported model without model-specific payload handling.

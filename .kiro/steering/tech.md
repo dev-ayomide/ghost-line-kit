@@ -11,7 +11,8 @@ inclusion: always
 - Validation: zod for all inbound webhooks and agent tool inputs.
 - Tests: vitest for unit tests and fast-check for property-based tests (PBT). Every kit module that formats, splits or stores data must have properties, not just examples.
 - AI: Amazon Bedrock, behind a single `LlmProvider` interface in the kit so other providers can be swapped in. Never call a model SDK directly from an app.
-- Telco: Africa's Talking (SMS + USSD) through a `ChannelAdapter` interface. Use the sandbox in development. A `web` adapter powers the Phantom Handset.
+- AWS SDK v3 (approved): `@aws-sdk/client-bedrock-runtime` (Bedrock Converse API) and `@aws-sdk/client-dynamodb` + `@aws-sdk/lib-dynamodb` (DynamoDB). Imported only inside implementation files, never in interfaces.
+- Telco: Africa's Talking (SMS + USSD) through a `ChannelAdapter` interface. Use the sandbox in development. A `web` adapter powers the Phantom Handset. Webhook auth: secret token in callback URL query string (`WEBHOOK_SECRET` from `.env`), compared in constant time; optional IP allowlisting left to deployment.
 - Storage: a `Store` interface with an in-memory version for tests and a DynamoDB version for production.
 - Frontend (Phantom Handset + landing page): Vite + React + TypeScript. No heavy UI libraries; hand-built CSS for the retro phone look.
 - Deploy: AWS (App Runner or Lambda for the API, S3 + CloudFront or Amplify for the web). Use a single `.env.example`; never commit secrets.
