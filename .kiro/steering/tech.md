@@ -22,6 +22,7 @@ inclusion: always
 - Every channel limit lives in one place: `kit/src/limits.ts`.
 - Errors shown to end users are short and actionable ("Try again. Send HELP for options."). Never send stack traces or internal IDs.
 - Keep dependencies few. Ask before adding one.
+- Approved AWS SDK v3 packages (2026-11-14): `@aws-sdk/client-bedrock-runtime` (BedrockProvider), `@aws-sdk/client-dynamodb` and `@aws-sdk/lib-dynamodb` (DynamoStore). Import them only inside those implementation files.
 
 ## Testing
 - `pnpm test` runs everything. `pnpm test:pbt` runs only the property tests, with more runs.
