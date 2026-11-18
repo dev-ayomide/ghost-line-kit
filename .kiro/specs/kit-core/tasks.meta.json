@@ -1,0 +1,72 @@
+{
+  "pbtResults": {
+    "2.1a Write PBT for encoding detection in `kit/test/encoding.pbt.test.ts`": {
+      "status": "passed",
+      "lastRunTimestamp": 1795015376665
+    }
+  },
+  "executionHistory": {
+    "0.1 Add runtime and dev dependencies to `kit/package.json`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795014214959
+      },
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795014869731
+      }
+    ],
+    "0.2 Update `.env.example` with DynamoDB table name": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795014215545
+      },
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795014869772
+      }
+    ],
+    "1.1 Implement `kit/src/limits.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795014216365
+      },
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795014871184
+      }
+    ],
+    "1.1a Write example tests for limits constants in `kit/test/limits.test.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795014870419
+      }
+    ],
+    "2.1 Implement `detectEncoding` and `GSM7_CHARS` in `kit/src/format/encoding.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795014909325
+      },
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015487321
+      }
+    ],
+    "2.1a Write PBT for encoding detection in `kit/test/encoding.pbt.test.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015487253
+      }
+    ]
+  }
+}

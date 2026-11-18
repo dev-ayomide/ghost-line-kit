@@ -12,35 +12,35 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
 
 ### 0. Project Setup
 
-- [ ] 0.1 Add runtime and dev dependencies to `kit/package.json`
+- [x] 0.1 Add runtime and dev dependencies to `kit/package.json`
   - Add `zod` as a runtime dependency (used by webhook validation, tool input schemas, and IntentSchema)
   - Add `@aws-sdk/client-bedrock-runtime`, `@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb` as runtime dependencies (imported only inside BedrockProvider and DynamoStore implementation files, never in interfaces)
   - Add `@types/node` as a dev dependency (needed for `crypto.timingSafeEqual`, `process.env`, `fetch` types)
   - _Requirements: 2.2, 10.1, 11.2, 12.3_
 
-- [ ] 0.2 Update `.env.example` with DynamoDB table name
+- [x] 0.2 Update `.env.example` with DynamoDB table name
   - Add `DYNAMO_TABLE_NAME=` for the DynamoStore production table
   - Verify existing entries cover AT, Bedrock, and webhook vars (already present: `AT_USERNAME`, `AT_API_KEY`, `AT_SHORTCODE`, `AWS_REGION`, `BEDROCK_MODEL_ID`, `WEBHOOK_SECRET`)
   - _Requirements: 12.3_
 
 ### 1. Limits Module
 
-- [ ] 1.1 Implement `kit/src/limits.ts`
+- [x] 1.1 Implement `kit/src/limits.ts`
   - Export a frozen `LIMITS` constant with the structure from the design: `sms.gsm7` (singleSegment: 160, concatSegment: 153), `sms.ucs2` (singleSegment: 70, concatSegment: 67), `ussd` (screenHardCap: 160, screenSoftTarget: 140, sessionTimeoutMs: 180_000, maxOptionsPerScreen: 5), `reply` (maxPreferredSegments: 3, nextStepMaxLength: 40), `rateLimit` (windowMs: 60_000, maxInbound: 10, maxOutbound: 10)
   - Use `as const` so all values are literal types
   - _Requirements: 1.1–1.9_
-  - [ ]* 1.1a Write example tests for limits constants in `kit/test/limits.test.ts`
+  - [x]* 1.1a Write example tests for limits constants in `kit/test/limits.test.ts`
     - Assert every LIMITS field matches the spec values from Requirements 1.1–1.9
     - _Requirements: 1.1–1.9_
 
 ### 2. Format Module
 
-- [ ] 2.1 Implement `detectEncoding` and `GSM7_CHARS` in `kit/src/format/encoding.ts`
+- [x] 2.1 Implement `detectEncoding` and `GSM7_CHARS` in `kit/src/format/encoding.ts`
   - Build `GSM7_CHARS` as a `ReadonlySet<string>` from the 3GPP TS 23.038 GSM 7-bit default alphabet (128 basic characters: a–z, A–Z, 0–9, common punctuation, space, `@`, accented and Greek chars in the basic table)
   - `detectEncoding(text: string): Encoding` returns `'GSM-7'` if every character is in `GSM7_CHARS`, otherwise `'UCS-2'`
   - Export `type Encoding = 'GSM-7' | 'UCS-2'`
   - _Requirements: 4.1, 4.2, 4.3_
-  - [ ] 2.1a Write PBT for encoding detection in `kit/test/encoding.pbt.test.ts`
+  - [x] 2.1a Write PBT for encoding detection in `kit/test/encoding.pbt.test.ts`
     - **Property 1: Encoding detection correctness** — for any string, `detectEncoding` returns `'GSM-7'` iff every character is in the GSM-7 alphabet, else `'UCS-2'`
     - Generator: two branches — (a) strings of only GSM-7 chars, (b) strings with at least one non-GSM-7 char (emoji, CJK, `{}|^~\`)
     - **Validates: Requirements 4.1, 4.2, 4.3**
