@@ -14,7 +14,7 @@ describe('LIMITS (Requirements 1.1-1.9)', () => {
         sessionTimeoutMs: 180_000,
         maxOptionsPerScreen: 5,
       },
-      reply: { maxPreferredSegments: 3, nextStepMaxLength: 40 },
+      reply: { maxPreferredSegments: 3, nextStepMaxLength: 40, errorMaxLength: 160 },
       rateLimit: { windowMs: 60_000, maxInbound: 10, maxOutbound: 10 },
     });
   });

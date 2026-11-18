@@ -15,6 +15,7 @@ export const LIMITS = Object.freeze({
   reply: Object.freeze({
     maxPreferredSegments: 3,
     nextStepMaxLength: 40,
+    errorMaxLength: 160,
   }),
   rateLimit: Object.freeze({
     windowMs: 60_000,

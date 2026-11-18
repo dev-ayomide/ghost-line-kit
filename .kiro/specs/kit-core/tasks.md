@@ -178,18 +178,18 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
 
 ### 5. Agent
 
-- [ ] 5.1 Implement `Intent`, `IntentSchema`, `serializeIntent`, `parseIntent` in `kit/src/agent/intent.ts`
+- [x] 5.1 Implement `Intent`, `IntentSchema`, `serializeIntent`, `parseIntent` in `kit/src/agent/intent.ts`
   - `Intent` type: `{ name: string, parameters: Record<string, string | number | boolean>, rawMessage: string }`
   - `IntentSchema` — a zod schema matching the `Intent` type, used for validation and serialization
   - `serializeIntent(intent: Intent): string` — serialises to JSON string
   - `parseIntent(json: string): Intent` — parses from JSON string, validating with `IntentSchema`
   - _Requirements: 9.1, 9.3, 9.4_
-  - [ ] 5.1a Write PBT for intent serialization round-trip in `kit/test/intent.pbt.test.ts`
+  - [x] 5.1a Write PBT for intent serialization round-trip in `kit/test/intent.pbt.test.ts`
     - **Property 8: Intent serialization round-trip** — serializing an Intent to JSON and parsing it back produces an Intent with the same name, parameter names and values, and raw message
     - Generator: `fc.record({ name: fc.string(), parameters: fc.dictionary(fc.string(), fc.oneof(fc.string(), fc.integer(), fc.boolean())), rawMessage: fc.string() })`
     - **Validates: Requirements 9.3, 9.4**
 
-- [ ] 5.2 Implement `Tool` interface and `ToolRegistry` in `kit/src/agent/tool-registry.ts`
+- [x] 5.2 Implement `Tool` interface and `ToolRegistry` in `kit/src/agent/tool-registry.ts`
   - `Tool` interface: `{ name: string, description: string, inputSchema: z.ZodType, execute: (input: unknown) => Promise<unknown> }`
   - `ToolRegistry` class: `register(tool: Tool)`, `get(name: string): Tool | undefined`, `invoke(name: string, input: unknown): Promise<ToolResult>`
   - `invoke` validates input against the tool's zod schema before executing; on validation failure returns `{ ok: false, userMessage }` with a message ≤160 chars and a recovery action
@@ -197,12 +197,12 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
   - Export `ToolResult` type from this file
   - _Requirements: 10.1, 10.2, 10.3, 10.4_
 
-- [ ] 5.3 Implement `LlmProvider` interface in `kit/src/agent/llm-provider.ts`
+- [x] 5.3 Implement `LlmProvider` interface in `kit/src/agent/llm-provider.ts`
   - `LlmProvider` interface: `{ complete(prompt: string): Promise<string>, classifyIntent(message: string, intentNames: string[]): Promise<Intent> }`
   - Import `Intent` type from `agent/intent.ts`
   - _Requirements: 11.1_
 
-- [ ] 5.4 Implement `BedrockProvider` in `kit/src/agent/bedrock-provider.ts`
+- [x] 5.4 Implement `BedrockProvider` in `kit/src/agent/bedrock-provider.ts`
   - Implements `LlmProvider` using `@aws-sdk/client-bedrock-runtime` (`BedrockRuntimeClient`, `Converse` command); imported only inside this file
   - Constructor takes `{ region: string, modelId?: string, client?: BedrockRuntimeClient }`; `modelId` defaults to `process.env.BEDROCK_MODEL_ID`; client is injectable for tests
   - `complete()` calls the Bedrock Converse API and extracts text from the response
@@ -216,12 +216,12 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
     - Test unrecognized intent when model returns a name not in `intentNames`
     - _Requirements: 11.2, 11.4_
 
-- [ ] 5.5 Implement `Agent` class in `kit/src/agent/agent.ts`
+- [x] 5.5 Implement `Agent` class in `kit/src/agent/agent.ts`
   - Constructor takes `{ llm: LlmProvider, tools: ToolRegistry, intentNames: string[] }`
   - `classify(message: string): Promise<Intent>` — uses `LlmProvider.classifyIntent`; if no match, classifies as `'unrecognized'`
   - `invokeTool(name: string, input: unknown): Promise<ToolResult>` — delegates to `ToolRegistry.invoke`
   - _Requirements: 9.2, 9.5, 10.2, 10.3, 10.4_
-  - [ ]* 5.5a Write example tests for Agent in `kit/test/agent.test.ts`
+  - [x]* 5.5a Write example tests for Agent in `kit/test/agent.test.ts`
     - Test unrecognized intent when message matches no intent name (Req 9.5)
     - Test tool validation failure returns actionable error ≤160 chars (Req 10.3)
     - Test unregistered tool name returns error without executing (Req 10.4)
@@ -229,20 +229,20 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
 
 ### 6. Channel Adapters
 
-- [ ] 6.1 Implement `ChannelAdapter` interface and shared types in `kit/src/channels/types.ts`
+- [x] 6.1 Implement `ChannelAdapter` interface and shared types in `kit/src/channels/types.ts`
   - `ChannelAdapter` interface: `channel: ChannelType`, `send(message: OutboundMessage): Promise<SendResult>`, `parseWebhook(rawPayload: unknown, headers: Record<string, string>): WebhookResult`, `onDeliveryStatus(handler: (status: DeliveryStatus) => void): () => void`
   - Export `ChannelType`, `OutboundMessage`, `InboundMessage`, `SendResult`, `WebhookResult`, `DeliveryStatus` types from this file
   - Import `LIMITS` for type-level reference where channel limits are relevant
   - _Requirements: 2.1, 2.5_
 
-- [ ] 6.2 Implement `WebAdapter` in `kit/src/channels/web-adapter.ts`
+- [x] 6.2 Implement `WebAdapter` in `kit/src/channels/web-adapter.ts`
   - Powers the Phantom Handset browser emulator; no real telco, no webhook authentication
   - `send()` delivers via a registered `onDeliver` callback; returns `{ ok: true, messageId }` immediately
   - `parseWebhook()` validates browser-originated payload with a zod schema (`{ from: string, text: string, sessionId?: string }`), returns `InboundMessage` or error
   - `onDeliveryStatus()` returns a no-op unsubscribe (delivery is simulated)
   - _Requirements: 2.4, 2.2, 2.6_
 
-- [ ] 6.3 Implement `SmsAdapter` in `kit/src/channels/sms-adapter.ts`
+- [x] 6.3 Implement `SmsAdapter` in `kit/src/channels/sms-adapter.ts`
   - Sends SMS via Africa's Talking REST API using `fetch` (no AT SDK imported)
   - Constructor takes `{ username, apiKey, shortcode?, webhookSecret? }`
   - `send()` POSTs form-encoded data to `https://api.africastalking.com/version1/messaging`; returns `{ ok, messageId?, error? }`; on API error returns `{ ok: false, error }` preserving prior state
@@ -250,7 +250,7 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
   - If credentials are missing or invalid, returns error result indicating config failure
   - _Requirements: 2.2, 2.3, 2.6, 3.1, 3.4, 3.5, 3.6_
 
-- [ ] 6.4 Implement `UssdAdapter` in `kit/src/channels/ussd-adapter.ts`
+- [x] 6.4 Implement `UssdAdapter` in `kit/src/channels/ussd-adapter.ts`
   - Handles USSD sessions via Africa's Talking; same constructor shape as SmsAdapter
   - `send()` is synchronous: formats response with `CON ` or `END ` prefix (based on `endSession`) and returns it in `SendResult.responseText`
   - `parseWebhook()` validates USSD callback payload (`sessionId`, `phoneNumber`, `serviceCode`, `text`) with zod, returns `InboundMessage` with `sessionId` set; same webhook auth as SmsAdapter

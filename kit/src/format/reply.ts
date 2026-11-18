@@ -1,11 +1,11 @@
+import type { ChannelType } from '../channels/types.js';
 import { LIMITS } from '../limits.js';
 import { detectEncoding, type Encoding } from './encoding.js';
 import { pureSplit, splitByLimit, splitMessage, summarizeSegments } from './split.js';
 
-// TODO(task 6.1): re-point `channel` to ChannelType from channels/types.ts. The message
-// processor will wrap a ReplyResult into an OutboundMessage.
+// The message processor will wrap a ReplyResult into an OutboundMessage.
 export interface ReplyOpts {
-  channel: 'sms' | 'ussd' | 'web';
+  channel: ChannelType;
   /** false for STOP / DELETE / session-end acknowledgements: no next step is added. */
   continueConversation: boolean;
   /** App-supplied next-step copy. Trimmed to LIMITS.reply.nextStepMaxLength. */

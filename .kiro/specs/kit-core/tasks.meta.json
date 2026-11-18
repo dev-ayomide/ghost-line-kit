@@ -294,6 +294,150 @@
         "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
         "timestamp": 1795017500687
       }
+    ],
+    "5.1 Implement `Intent`, `IntentSchema`, `serializeIntent`, `parseIntent` in `kit/src/agent/intent.ts`": [
+      {
+        "executionId": "e8c5bca6-e65c-45ca-8ec1-4dd8c038813e",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017837768
+      },
+      {
+        "executionId": "e8c5bca6-e65c-45ca-8ec1-4dd8c038813e",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017973788
+      }
+    ],
+    "5.2 Implement `Tool` interface and `ToolRegistry` in `kit/src/agent/tool-registry.ts`": [
+      {
+        "executionId": "e8c5bca6-e65c-45ca-8ec1-4dd8c038813e",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017837807
+      },
+      {
+        "executionId": "e8c5bca6-e65c-45ca-8ec1-4dd8c038813e",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017974725
+      }
+    ],
+    "6.1 Implement `ChannelAdapter` interface and shared types in `kit/src/channels/types.ts`": [
+      {
+        "executionId": "e8c5bca6-e65c-45ca-8ec1-4dd8c038813e",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017838118
+      },
+      {
+        "executionId": "e8c5bca6-e65c-45ca-8ec1-4dd8c038813e",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017975565
+      }
+    ],
+    "5.1a Write PBT for intent serialization round-trip in `kit/test/intent.pbt.test.ts`": [
+      {
+        "executionId": "e8c5bca6-e65c-45ca-8ec1-4dd8c038813e",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017973756
+      }
+    ],
+    "5.3 Implement `LlmProvider` interface in `kit/src/agent/llm-provider.ts`": [
+      {
+        "executionId": "e8c5bca6-e65c-45ca-8ec1-4dd8c038813e",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017983602
+      },
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795033322883
+      }
+    ],
+    "6.2 Implement `WebAdapter` in `kit/src/channels/web-adapter.ts`": [
+      {
+        "executionId": "e8c5bca6-e65c-45ca-8ec1-4dd8c038813e",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017985491
+      },
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795033324973
+      }
+    ],
+    "6.3 Implement `SmsAdapter` in `kit/src/channels/sms-adapter.ts`": [
+      {
+        "executionId": "e8c5bca6-e65c-45ca-8ec1-4dd8c038813e",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017985522
+      },
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795033362108
+      },
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795033362916
+      },
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795035035820
+      }
+    ],
+    "6.4 Implement `UssdAdapter` in `kit/src/channels/ussd-adapter.ts`": [
+      {
+        "executionId": "e8c5bca6-e65c-45ca-8ec1-4dd8c038813e",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017986063
+      },
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795033337756
+      }
+    ],
+    "5.4 Implement `BedrockProvider` in `kit/src/agent/bedrock-provider.ts`": [
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795033362149
+      },
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795035036646
+      }
+    ],
+    "5.5 Implement `Agent` class in `kit/src/agent/agent.ts`": [
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795033362418
+      },
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795035038243
+      }
+    ],
+    "6.4a Write integration tests for channel adapters in `kit/test/channels.test.ts`": [
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795035035846
+      },
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795035045761
+      }
+    ],
+    "5.5a Write example tests for Agent in `kit/test/agent.test.ts`": [
+      {
+        "executionId": "b0e59b18-63e3-46c5-bc98-1a3ff60d4681",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795035037445
+      }
     ]
   }
 }

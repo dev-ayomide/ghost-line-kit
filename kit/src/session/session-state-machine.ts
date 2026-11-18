@@ -1,9 +1,9 @@
+import type { ChannelType } from '../channels/types.js';
 import { LIMITS } from '../limits';
 import type { Store } from '../store/store.js';
 import type { Clock } from './clock.js';
 
-// TODO(task 6.1): re-point the channel union to `ChannelType` from channels/types.ts.
-type SessionChannel = 'sms' | 'ussd' | 'web';
+type SessionChannel = ChannelType;
 
 export type SessionStatus = 'active' | 'timed-out' | 'ended';
 
