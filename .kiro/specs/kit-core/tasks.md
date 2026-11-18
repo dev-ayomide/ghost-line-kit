@@ -123,13 +123,13 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
 
 ### 3. Session State Machine
 
-- [ ] 3.1 Implement `Clock`, `SystemClock`, `TestClock` in `kit/src/session/clock.ts`
+- [x] 3.1 Implement `Clock`, `SystemClock`, `TestClock` in `kit/src/session/clock.ts`
   - `Clock` interface: `now(): number` (returns epoch milliseconds)
   - `SystemClock` uses `Date.now()`
   - `TestClock` holds a mutable counter with `advance(ms)` and `set(ms)` methods for deterministic timeout testing
   - _Requirements: 8.5_
 
-- [ ] 3.2 Implement `sessionTransition` pure function in `kit/src/session/session-state-machine.ts`
+- [x] 3.2 Implement `sessionTransition` pure function in `kit/src/session/session-state-machine.ts`
   - `sessionTransition(current: SessionState | undefined, event: SessionEvent, nowMs: number, timeoutMs: number): SessionState | undefined`
   - Event types: `{ type: 'inbound', conversationState }` creates/resumes/updates; `{ type: 'check' }` computes timeout; `{ type: 'end' }` returns undefined (session removed)
   - On `inbound`: creates session if none exists; resumes timed-out session to `active` with new conversation state; updates active session
@@ -137,12 +137,12 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
   - Export `SessionState`, `SessionStatus`, `SessionEvent` types from this file
   - Import `LIMITS.ussd.sessionTimeoutMs` for default timeout (callers may override)
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
-  - [ ] 3.2a Write PBT for session state machine in `kit/test/session.pbt.test.ts`
+  - [x] 3.2a Write PBT for session state machine in `kit/test/session.pbt.test.ts`
     - **Property 7: Session state machine correctness** — for all event sequences: (a) after 180s+ inactivity, status is `timed-out` and stored state equals state at last inbound; (b) next inbound on timed-out session resumes to `active` with preserved state; (c) after explicit end, session not retrievable; (d) session never `active` after 180s+ since last inbound
     - Generator: sequences of events (`inbound`, `advance` 0–300000ms, `end`, `check`) applied with a `TestClock`; assert applicable sub-property after each event
     - **Validates: Requirements 8.2, 8.3, 8.4, 8.6**
 
-- [ ] 3.3 Implement `SessionStateMachine` class in `kit/src/session/session-state-machine.ts`
+- [x] 3.3 Implement `SessionStateMachine` class in `kit/src/session/session-state-machine.ts`
   - Wraps the pure `sessionTransition` with `Store` persistence and an injected `Clock`
   - `handleInbound(phone, channel, conversationState): SessionState` — loads from store, calls `sessionTransition`, writes back
   - `endSession(phone, channel): void` — calls `sessionTransition` with `end` event, removes from store
@@ -152,18 +152,18 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
 
 ### 4. Store
 
-- [ ] 4.1 Implement `Store` interface in `kit/src/store/store.ts`
+- [x] 4.1 Implement `Store` interface in `kit/src/store/store.ts`
   - `Store` interface: `read<T>(key: string): Promise<T | undefined>`, `write<T>(key: string, value: T): Promise<void>`, `delete(key: string): Promise<void>`
   - Each operation keyed by a string identifier for session state, user preferences, and application data
   - If an operation fails, the implementation surfaces an error and preserves previously persisted data
   - _Requirements: 12.1, 12.4_
 
-- [ ] 4.2 Implement `MemoryStore` in `kit/src/store/memory-store.ts`
+- [x] 4.2 Implement `MemoryStore` in `kit/src/store/memory-store.ts`
   - Backed by a `Map<string, unknown>`; all operations synchronous internally but return Promises for interface conformance
   - Used in tests and development
   - _Requirements: 12.2_
 
-- [ ] 4.3 Implement `DynamoStore` in `kit/src/store/dynamo-store.ts`
+- [x] 4.3 Implement `DynamoStore` in `kit/src/store/dynamo-store.ts`
   - Backed by `@aws-sdk/lib-dynamodb` (`DynamoDBDocumentClient`); imported only inside this file
   - Constructor takes `{ tableName: string, client?: DynamoDBDocumentClient }`; client is injectable for testing
   - Stores values as JSON-serialised attributes; reads parse JSON back

@@ -203,6 +203,97 @@
         "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
         "timestamp": 1795016569527
       }
+    ],
+    "3.1 Implement `Clock`, `SystemClock`, `TestClock` in `kit/src/session/clock.ts`": [
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016827522
+      },
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016893526
+      }
+    ],
+    "4.1 Implement `Store` interface in `kit/src/store/store.ts`": [
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016827574
+      },
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016898902
+      }
+    ],
+    "3.2 Implement `sessionTransition` pure function in `kit/src/session/session-state-machine.ts`": [
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016913201
+      },
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017394560
+      }
+    ],
+    "4.2 Implement `MemoryStore` in `kit/src/store/memory-store.ts`": [
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016913416
+      },
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017395312
+      }
+    ],
+    "4.3 Implement `DynamoStore` in `kit/src/store/dynamo-store.ts`": [
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016913466
+      },
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017396236
+      }
+    ],
+    "3.2a Write PBT for session state machine in `kit/test/session.pbt.test.ts`": [
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017393533
+      }
+    ],
+    "4.3a Write integration tests for DynamoStore in `kit/test/store-dynamo.test.ts`": [
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017396260
+      },
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017403146
+      }
+    ],
+    "3.3 Implement `SessionStateMachine` class in `kit/src/session/session-state-machine.ts`": [
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017403424
+      },
+      {
+        "executionId": "7c08ab99-2104-4b2c-885b-239271aed621",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795017500687
+      }
     ]
   }
 }
