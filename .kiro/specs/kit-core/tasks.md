@@ -45,7 +45,7 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
     - Generator: two branches — (a) strings of only GSM-7 chars, (b) strings with at least one non-GSM-7 char (emoji, CJK, `{}|^~\`)
     - **Validates: Requirements 4.1, 4.2, 4.3**
 
-- [ ] 2.2 Implement `pureSplit` in `kit/src/format/split.ts`
+- [x] 2.2 Implement `pureSplit` in `kit/src/format/split.ts`
   - `pureSplit(text: string, encoding: Encoding): string[]` — the Pure_Splitter
   - Determine single vs concatenated limit from encoding: GSM-7 → 160 single / 153 concat; UCS-2 → 70 single / 67 concat
   - Tokenise by whitespace (keeping whitespace tokens so concatenation round-trips), then greedily fill segments
@@ -53,69 +53,69 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
   - Concatenating returned segments yields the original text
   - Import `LIMITS` from `limits.ts` for segment sizes; do not hardcode limits
   - _Requirements: 5.1, 5.2, 5.5, 5.6_
-  - [ ] 2.2a Write PBT for segment limit compliance in `kit/test/split.pbt.test.ts`
+  - [x] 2.2a Write PBT for segment limit compliance in `kit/test/split.pbt.test.ts`
     - **Property 2: Segment limit compliance** — every segment from `pureSplit` is within the char limit for the detected encoding (160/70 single, 153/67 concat)
     - Generator: random strings of varying lengths, including just under/over the single-segment boundary; constrain non-whitespace token lengths to the segment limit
     - **Validates: Requirements 5.1, 5.3**
-  - [ ] 2.2b Write PBT for split round-trip in `kit/test/split.pbt.test.ts`
+  - [x] 2.2b Write PBT for split round-trip in `kit/test/split.pbt.test.ts`
     - **Property 3: Split round-trip** — for any message, concatenating the resulting segments yields the original text exactly (pureSplit never truncates)
     - Generator: strings of any length; include leading/trailing whitespace, consecutive spaces, single-char words, mixed GSM-7/UCS-2
     - **Validates: Requirements 5.4**
-  - [ ] 2.2c Write PBT for no atomic unit split in `kit/test/split.pbt.test.ts`
+  - [x] 2.2c Write PBT for no atomic unit split in `kit/test/split.pbt.test.ts`
     - **Property 4: No atomic unit split across segments** — no segment boundary falls inside a word, number, currency amount, or phone number
     - Generator: strings of words, numbers (`1,500`, `3.14`), currency (`₦1,500`), and phone numbers (`+2348051234567`) separated by single spaces; constrain each token to the segment limit
     - **Validates: Requirements 5.2, 5.5**
 
-- [ ] 2.3 Implement `splitMessage` (summary + Reply MORE step) in `kit/src/format/split.ts`
+- [x] 2.3 Implement `splitMessage` (summary + Reply MORE step) in `kit/src/format/split.ts`
   - `splitMessage(text: string): SplitResult` — calls `detectEncoding` then `pureSplit`
   - If segment count exceeds `LIMITS.reply.maxPreferredSegments` (3), apply summary step: keep leading segments, trim the last at a word boundary, append `" Reply MORE"` to the final segment
   - Return `SplitResult` with `segments`, `truncated`, `encoding`, `segmentCount`
   - Export `interface SplitResult` from this file
   - _Requirements: 5.7, 5.8_
-  - [ ] 2.3a Write example tests for the summary step in `kit/test/split.test.ts`
+  - [x] 2.3a Write example tests for the summary step in `kit/test/split.test.ts`
     - Test (a): message producing exactly 3 segments (no summary triggered, `truncated: false`)
     - Test (b): message producing 4 segments (summary triggered, leading portion emitted, `" Reply MORE"` appended, `truncated: true`)
     - Test (c): message with a currency amount at the truncation boundary (amount not split across the boundary)
     - Also test the hard-split edge case (Req 5.6): a single atomic unit longer than the segment limit is hard-split at a character boundary
     - _Requirements: 5.6, 5.7, 5.8_
 
-- [ ] 2.4 Implement `renderMenuScreen` and `renderMenuScreens` in `kit/src/format/menu.ts`
+- [x] 2.4 Implement `renderMenuScreen` and `renderMenuScreens` in `kit/src/format/menu.ts`
   - `renderMenuScreen(options: MenuOption[], offset: number, config?: Partial<MenuConfig>): string` — renders one USSD screen with up to 5 numbered options (1–5) plus `0 Back` and `00 Menu`; returns text ≤160 chars
   - `renderMenuScreens(options: MenuOption[], config?: Partial<MenuConfig>): string[]` — renders all screens for a menu with more than 5 options, splitting across subsequent screens
   - Never split a word, number, currency amount, or phone number across screens
   - Import `LIMITS` for screen cap and max options per screen
   - Export `interface MenuOption`, `interface MenuConfig` from this file
   - _Requirements: 6.1, 6.2, 6.3, 6.5, 6.6_
-  - [ ] 2.4a Write PBT for menu screen character limit in `kit/test/menu.pbt.test.ts`
+  - [x] 2.4a Write PBT for menu screen character limit in `kit/test/menu.pbt.test.ts`
     - **Property 5: Menu screen character limit** — every screen from `renderMenuScreens` is ≤160 characters
     - Generator: arrays of `MenuOption` with random labels (1–50 chars); include 1 option, 5 options, and >5 options (multi-screen)
     - **Validates: Requirements 6.2, 6.4**
-  - [ ] 2.4b Write PBT for no atomic unit split across USSD screens in `kit/test/menu.pbt.test.ts`
+  - [x] 2.4b Write PBT for no atomic unit split across USSD screens in `kit/test/menu.pbt.test.ts`
     - **Property 6: No atomic unit split across USSD screens** — no screen boundary falls inside a word, number, currency amount, or phone number
     - Generator: `MenuOption` arrays whose labels contain atomic units, with label lengths pushing against the 160-char cap
     - **Validates: Requirements 6.3**
-  - [ ]* 2.4c Write example tests for menu rendering in `kit/test/menu.test.ts`
+  - [x]* 2.4c Write example tests for menu rendering in `kit/test/menu.test.ts`
     - Test menu format: 5 options numbered 1–5 plus `0 Back` and `00 Menu` (Req 6.1)
     - Test soft target: menu content fitting within 140 chars renders at ≤140 chars (Req 6.5)
     - Test multi-screen: >5 options split across subsequent screens, each with ≤5 options (Req 6.6)
     - _Requirements: 6.1, 6.5, 6.6_
 
-- [ ] 2.5 Implement `maskPhoneNumber` in `kit/src/format/phone.ts`
+- [x] 2.5 Implement `maskPhoneNumber` in `kit/src/format/phone.ts`
   - `maskPhoneNumber(phone: string): string` — if more than 7 digits: keep first 3 and last 4 digits visible, mask the rest with `*`; if 7 or fewer digits: keep only last 2 visible; preserve non-digit characters (like `+`) as-is
   - _Requirements: 14.1, 14.2, 14.3_
-  - [ ] 2.5a Write PBT for phone number masking in `kit/test/phone.pbt.test.ts`
+  - [x] 2.5a Write PBT for phone number masking in `kit/test/phone.pbt.test.ts`
     - **Property 9: Phone number masking** — for any phone string, preserves only first 3 and last 4 digits when >7 digits, only last 2 when ≤7 digits; no other original digits appear; non-digit chars preserved
     - Generator: two branches — (a) strings with 8–20 digits mixed with optional `+` prefix and separators, (b) strings with 1–7 digits
     - **Validates: Requirements 14.1, 14.2, 14.3**
 
-- [ ] 2.6 Implement `formatReply` in `kit/src/format/reply.ts`
+- [x] 2.6 Implement `formatReply` in `kit/src/format/reply.ts`
   - `formatReply(content: string, opts: ReplyOpts): ReplyResult` — detects encoding, splits into segments via `splitMessage`, appends a next-step instruction (≤40 chars) to the final segment when `continueConversation` is true
   - If the next-step instruction would overflow the final segment, place it in an additional segment without truncating reply content
   - Never append a next step to STOP, DELETE, or session-end acknowledgments (`continueConversation: false`)
   - Import `detectEncoding`, `splitMessage` from format modules; import `LIMITS` for `nextStepMaxLength`
   - Export `interface ReplyOpts`, `interface ReplyResult` from this file
   - _Requirements: 7.1, 7.2_
-  - [ ]* 2.6a Write example tests for reply formatting in `kit/test/reply.test.ts`
+  - [x]* 2.6a Write example tests for reply formatting in `kit/test/reply.test.ts`
     - Test next-step instruction appended to final segment when conversation continues (Req 7.1)
     - Test next-step instruction placed in additional segment when it would overflow (Req 7.2)
     - Test no next-step appended when `continueConversation` is false (STOP/DELETE/session-end ack)

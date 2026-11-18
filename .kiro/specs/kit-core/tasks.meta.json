@@ -3,6 +3,14 @@
     "2.1a Write PBT for encoding detection in `kit/test/encoding.pbt.test.ts`": {
       "status": "passed",
       "lastRunTimestamp": 1795015376665
+    },
+    "2.4a Write PBT for menu screen character limit in `kit/test/menu.pbt.test.ts`": {
+      "status": "passed",
+      "lastRunTimestamp": 1795015748761
+    },
+    "2.4b Write PBT for no atomic unit split across USSD screens in `kit/test/menu.pbt.test.ts`": {
+      "status": "passed",
+      "lastRunTimestamp": 1795015749285
     }
   },
   "executionHistory": {
@@ -66,6 +74,134 @@
         "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
         "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
         "timestamp": 1795015487253
+      }
+    ],
+    "2.2 Implement `pureSplit` in `kit/src/format/split.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015503882
+      },
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015880865
+      }
+    ],
+    "2.4 Implement `renderMenuScreen` and `renderMenuScreens` in `kit/src/format/menu.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015521874
+      },
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015881419
+      }
+    ],
+    "2.5 Implement `maskPhoneNumber` in `kit/src/format/phone.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015521940
+      },
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015882293
+      }
+    ],
+    "2.2a Write PBT for segment limit compliance in `kit/test/split.pbt.test.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015874488
+      }
+    ],
+    "2.2b Write PBT for split round-trip in `kit/test/split.pbt.test.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015874690
+      }
+    ],
+    "2.2c Write PBT for no atomic unit split in `kit/test/split.pbt.test.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015874725
+      }
+    ],
+    "2.4a Write PBT for menu screen character limit in `kit/test/menu.pbt.test.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015874934
+      }
+    ],
+    "2.4b Write PBT for no atomic unit split across USSD screens in `kit/test/menu.pbt.test.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015875316
+      }
+    ],
+    "2.4c Write example tests for menu rendering in `kit/test/menu.test.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015876386
+      }
+    ],
+    "2.5a Write PBT for phone number masking in `kit/test/phone.pbt.test.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015876620
+      }
+    ],
+    "2.3 Implement `splitMessage` (summary + Reply MORE step) in `kit/src/format/split.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795015882931
+      },
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016081481
+      }
+    ],
+    "2.3a Write example tests for the summary step in `kit/test/split.test.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016010373
+      },
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016081181
+      }
+    ],
+    "2.6 Implement `formatReply` in `kit/src/format/reply.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016085185
+      },
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016570151
+      }
+    ],
+    "2.6a Write example tests for reply formatting in `kit/test/reply.test.ts`": [
+      {
+        "executionId": "a9ec6e2e-764d-4bd6-84a3-abb2bde758b1",
+        "chatSessionId": "sess_a1650593-9f02-4a85-8281-234e72a6bbfe",
+        "timestamp": 1795016569527
       }
     ]
   }
