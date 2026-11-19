@@ -118,3 +118,9 @@ Every action Claude Code takes: date, what, why, files.
 - Issue to fix: the intro claims the app should need "fewer than about 300 lines". This is unprovable given the requirements' scope and conflicts with our honesty rule. Asking Kiro to remove it.
 - Remaining open: Pidgin native-speaker review (owner), reminder trigger in the demo (later task).
 - Files: `.kiro/steering/{tech,feature-phone-ux}.md`, `docs/claude-code-log.md`, `.kiro/specs/oja-ghost/requirements.md` (Kiro).
+
+## 2026-11-19: Oja Ghost design.md written by Kiro; reviewed by Claude Code
+- Kiro wrote `.kiro/specs/oja-ghost/design.md` (478 lines): pure modules (money, names, ledger, prices, when, parser, reminders), thin I/O layer (tools, flows, dispatcher, seed), data model under `oja:` keys, kit `isSubscribed` amendment, nine properties P1-P9 (ledger balance, no-negative balance, rejected outlier leaves average unchanged, rejected paid leaves ledger equal, amount round trip, undo inverse, due-check, dispatcher at-most-once, GSM-7 replies).
+- Reviewed: matches the approved requirements and decisions (plain N, zod, isSubscribed). Public API only; reminders go to the trader only; DELETE sweep via reporter index; no new dependency beyond approved zod.
+- Kiro raised three decisions. Claude Code's recommendations: D1 approve (optional `llm` field on `HandsetApp`, one line in phantom-handset wire.ts, so Oja Ghost's own classifier handles USSD sub-menus); D2 keep v1 rule-based for money safety, with a model fallback for unmatched free text as an OPTIONAL task, so the "AI agent" claim is honest; D3 approve optional `nextStep` on the kit processor so Pidgin replies get a Pidgin next step (small kit amendment, with test).
+- Files: `.kiro/specs/oja-ghost/{requirements,design}.md` (Kiro), `docs/claude-code-log.md`.

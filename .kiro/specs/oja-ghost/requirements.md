@@ -4,11 +4,9 @@
 
 Oja Ghost is a market assistant for traders in Lagos, in `/apps/oja-ghost`. It works on any phone over SMS and USSD. A trader can check today's price of a commodity at a market, report a price, keep a debt book, and get SMS reminders for debts and supplier payments. It speaks English and Nigerian Pidgin.
 
-Oja Ghost is the first proof that the kit works: it should need fewer than about 300 lines of app-specific code.
-
 Decisions already made, and binding on this spec:
 
-1. **Public API only.** The app imports only from `@ghostline/kit`. It never imports `kit/src/...`. A hook enforces this.
+1. **Public API only.** The app imports only from `@ghostline/kit`. It never imports `kit/src/...`. The import-check hook from the kickoff guide is planned but does not exist yet, so a test covers this until it does.
 2. **Drop-in for the Phantom Handset.** The app exports a `HandsetApp`-shaped object (`id`, `name`, `tools`, `intentNames`, `copy`, `buildToolCall`, `renderOutput`, `eraseUserData`), the shape defined in `phantom-handset/server/apps.ts`, so `getApps()` can replace the stand-in. `HandsetApp` itself is not imported from `phantom-handset`.
 3. **Codes.** USSD `*384#` and SMS short code `38400`, as in `phantom-handset/src/config/handset-config.ts`. The handset opens USSD with the text `MENU` and starts an SMS chat with `Hi`.
 4. **Reminders go to the trader only.** The app never sends an SMS to a debtor or a supplier. This avoids messaging third parties who did not consent, and SMS cost abuse.
@@ -16,15 +14,15 @@ Decisions already made, and binding on this spec:
 
 Facts about the current kit that shape these requirements:
 
-- `Tool.inputSchema` is a `z.ZodType`, but the kit does not export `zod`. The app needs `zod` to define tool inputs. `zod` is approved only for `kit` and `phantom-handset`. See Open Question 1.
+- `Tool.inputSchema` is a `z.ZodType`, but the kit does not export `zod`. `zod` is approved for `apps/oja-ghost` (`tech.md`, 2026-11-19), for tool input schemas only.
 - `ToolContext.conversationState` is read-only for tools, so the app keeps its own USSD flow state in the `Store`.
 - `Store` has no list or scan operation. The app keeps its own index keys, and `eraseUserData` deletes by those keys.
-- `MessageProcessor` keeps the subscribed flag in a kit-internal key. The app has no public way to check STOP. See Open Question 2.
+- `MessageProcessor` keeps the subscribed flag in a kit-internal key. The kit amendment approved on 2026-11-19 exports `isSubscribed(store, phoneNumber)` so the app can respect STOP (Requirement 13).
 - `ProcessorCopy` is one language per app and must be GSM-7. The Pidgin and English versions of these fixed messages are combined in one short text.
 - The kit has no scheduler. Reminders need something to call a dispatch function on a timer.
-- `₦` is not in GSM-7. Any SMS that contains it is sent as UCS-2 (70 characters per segment, 67 when joined). `feature-phone-ux.md` still requires `₦`, so replies with money use it and the cost is accepted. See Open Question 3.
+- Replies write money with the plain letter `N` (for example `N1,500`), as `feature-phone-ux.md` now says, so every reply stays GSM-7.
 
-The ledger, price statistics, command parser, reminder date parser and reminder due-check are pure functions. The three properties you named, plus the properties in Requirement 11, are verified with fast-check. These tests are required. Other tests are optional.
+The ledger, price statistics, command parser, reminder date parser and reminder due-check are pure functions. The three properties you named, plus the properties in Requirement 12, are verified with fast-check. These tests are required. Other tests are optional.
 
 ## Glossary
 
@@ -37,7 +35,7 @@ The ledger, price statistics, command parser, reminder date parser and reminder 
 - **Accepted_Report**: a Price_Report that passed outlier rejection.
 - **Rejected_Report**: a Price_Report that failed outlier rejection. It is stored for audit and never used in the average.
 - **Reference_Price**: the demo seed price for a Commodity at a Market. Used to judge the first reports.
-- **Price_Average**: the mean of the Accepted_Reports of the current Lagos day for a Commodity at a Market, rounded to the nearest ₦10.
+- **Price_Average**: the mean of the Accepted_Reports of the current Lagos day for a Commodity at a Market, rounded to the nearest N10.
 - **Lagos_Day**: a calendar day in West Africa Time (UTC+1, no daylight saving).
 - **Ledger**: the debt book of one Trader: debtors and their entries.
 - **Entry**: one Ledger line with a debtor name, a type (`owe`, `paid` or `overpaid`), a whole-naira amount greater than 0, and a timestamp.
@@ -63,7 +61,7 @@ The ledger, price statistics, command parser, reminder date parser and reminder 
 4. THE factory SHALL default `deps.store` to a `MemoryStore` and `deps.clock` to a `SystemClock`, and SHALL seed Demo_Data into the store only when the store has none.
 5. THE Oja_Ghost SHALL keep every user-visible string, the Commodity and Market lists, the intent names, the USSD code and the short code in the App_Config, and SHALL NOT hard-code them in tool code.
 6. THE App_Config SHALL set the USSD code to `*384#`, the short code to `38400`, and SHALL accept `MENU` as the USSD opening text and `Hi` as the first SMS.
-7. THE Oja_Ghost SHALL add no dependency except `zod` (see Open Question 1), and SHALL NOT add one without approval.
+7. THE Oja_Ghost SHALL add no dependency except `zod` (approved), and SHALL NOT add one without approval.
 8. WHERE a compile-time check is added in `phantom-handset`, it SHALL assert that the object returned by `createOjaGhost()` is assignable to `HandsetApp`. This check is **optional**.
 
 ### Requirement 2: Check a Price
@@ -78,8 +76,7 @@ The ledger, price statistics, command parser, reminder date parser and reminder 
 4. IF the current Lagos_Day has no Accepted_Report for that Commodity and Market, THEN THE Oja_Ghost SHALL show the most recent price with its date, and SHALL say it is not from today.
 5. IF there are no Accepted_Reports at all, THEN THE Oja_Ghost SHALL show the Reference_Price and SHALL label it "Demo price".
 6. THE Oja_Ghost SHALL label every reply that uses Demo_Data with the word "Demo" (English) or "Demo" (Pidgin), and SHALL NOT present a Reference_Price as a live price.
-7. THE Oja_Ghost SHALL show a price with the naira sign and thousands separators, such as `₦68,000`, and SHALL NOT show decimals.
-8. WHEN a price reply would exceed 3 SMS segments, THE Oja_Ghost SHALL return a shorter reply and offer `Reply MORE`.
+7. WHEN a price reply would exceed 3 SMS segments, THE Oja_Ghost SHALL return a shorter reply and offer `Reply MORE`.
 
 ### Requirement 3: Report a Price with Crowdsourced Averaging
 
@@ -88,10 +85,10 @@ The ledger, price statistics, command parser, reminder date parser and reminder 
 #### Acceptance Criteria
 
 1. WHEN a Trader sends a message such as `report rice mile 12 68000` or `rice mile12 don cost 68,000`, THE Oja_Ghost SHALL validate the Commodity, Market and amount, and SHALL record a Price_Report.
-2. THE Oja_Ghost SHALL accept amounts written `68000`, `68,000`, `N68000`, `₦68,000` and `68k`, and SHALL reject amounts that are not whole naira between ₦1 and the maximum in the App_Config.
+2. THE Oja_Ghost SHALL accept amounts written `68000`, `68,000`, `N68000`, `N68,000` and `68k` (a pasted `₦` is also accepted as input), and SHALL reject amounts that are not whole naira between N1 and the maximum in the App_Config.
 3. THE Oja_Ghost SHALL keep at most one Price_Report per Trader, Commodity and Market per Lagos_Day. A later report from the same Trader on the same day SHALL replace the earlier one and the Price_Average SHALL be recomputed from the Accepted_Reports.
-4. THE Oja_Ghost SHALL store a salted one-way hash of the phone number as the reporter key, and SHALL NOT store the phone number in a Price_Report.
-5. THE Price_Average SHALL be the mean of the Accepted_Reports of the current Lagos_Day for the Commodity and Market, rounded to the nearest ₦10, and SHALL NOT include Rejected_Reports.
+4. THE Oja_Ghost SHALL store no phone number, hash or other identity in a Price_Report. A Price_Report carries a random report id, and the link from the Trader to that id lives only in the Trader's own index record, which DELETE removes. (Changed from a salted hash, so the app needs no crypto import and no secret.)
+5. THE Price_Average SHALL be the mean of the Accepted_Reports of the current Lagos_Day for the Commodity and Market, rounded to the nearest N10, and SHALL NOT include Rejected_Reports.
 6. WHEN a Trader sends a Price_Report, THE Oja_Ghost SHALL confirm the report, and SHALL say whether it was added to today's average or not.
 7. THE Oja_Ghost SHALL write the Price_Reports and the Trader's reporter index to the store so that DELETE can remove them (Requirement 9).
 
@@ -112,11 +109,11 @@ The ledger, price statistics, command parser, reminder date parser and reminder 
 
 ### Requirement 5: Debt Book Entries
 
-**User Story:** As a trader, I want to write down "Bola owes ₦4,500" and "Bola paid ₦2,000", so that I know who owes me.
+**User Story:** As a trader, I want to write down "Bola owes N4,500" and "Bola paid N2,000", so that I know who owes me.
 
 #### Acceptance Criteria
 
-1. WHEN a Trader sends a message such as `Bola owes 4500` or `Bola dey owe me ₦4,500`, THE Oja_Ghost SHALL append an `owe` Entry for that debtor and reply with the new Balance.
+1. WHEN a Trader sends a message such as `Bola owes 4500` or `Bola dey owe me N4,500`, THE Oja_Ghost SHALL append an `owe` Entry for that debtor and reply with the new Balance.
 2. WHEN a Trader sends a message such as `Bola paid 2000` or `Bola don pay 2,000`, THE Oja_Ghost SHALL append a `paid` Entry for that debtor and reply with the new Balance.
 3. THE Oja_Ghost SHALL treat debtor names as the same ignoring case, accents and extra spaces, SHALL allow names of 1 to 20 characters, and SHALL store the name as the Trader first wrote it.
 4. THE Oja_Ghost SHALL accept amounts in the same forms as Requirement 3.2.
@@ -133,9 +130,9 @@ The ledger, price statistics, command parser, reminder date parser and reminder 
 
 #### Acceptance Criteria
 
-1. WHEN a Trader sends `book`, `balance` or `who owe me`, THE Oja_Ghost SHALL reply with up to 5 debtors with the largest Balance, each with the name and Balance, and the total owed.
+1. WHEN a Trader sends `book`, `balance` or `who owe me`, THE Oja_Ghost SHALL reply with the debtors with the largest Balance, each with the name and Balance, and the total owed. On SMS and web the list holds up to 5 debtors. On USSD it holds up to 3 so that it fits one screen, and it names the SMS command for the full list.
 2. WHEN a Trader sends `book Bola` or `Bola balance`, THE Oja_Ghost SHALL reply with that debtor's Balance and the last 3 Entries with their dates.
-3. IF the Ledger has more than 5 debtors with a Balance above 0, THEN THE Oja_Ghost SHALL show the first 5 and offer `Reply MORE`.
+3. IF the Ledger has more than 5 debtors with a Balance above 0, THEN THE Oja_Ghost SHALL, on SMS and web, show the first 5 and offer `Reply MORE`.
 4. THE Oja_Ghost SHALL NOT list a debtor whose Balance is 0 in the summary, and SHALL show a debtor with a negative Balance as credit, separate from the total owed.
 5. THE Oja_Ghost SHALL NOT split a debtor name, an amount or a date across segments or screens.
 6. THE Oja_Ghost SHALL reply to an empty Ledger with a short sentence and the way to add the first Entry.
@@ -153,12 +150,12 @@ The ledger, price statistics, command parser, reminder date parser and reminder 
 5. THE Oja_Ghost SHALL allow at most 10 active Reminders per Trader, set in the App_Config.
 6. WHEN a Reminder is created, THE Oja_Ghost SHALL confirm the date and time in plain words.
 7. WHEN a Trader sends `reminders`, THE Oja_Ghost SHALL list the active Reminders with a number each. WHEN a Trader sends `cancel 2`, THE Oja_Ghost SHALL cancel the Reminder with that number.
-8. THE Oja_Ghost SHALL export a function `dispatchDueReminders({ store, sms, clock, rateLimiter, isSubscribed, logger })` that sends each due Reminder to its Trader through the given `ChannelAdapter`, and SHALL NOT send to any other number.
+8. THE Oja_Ghost SHALL export a function `dispatchDueReminders({ store, sms, clock, rateLimiter, logger })` that sends each due Reminder to its Trader through the given `ChannelAdapter`, and SHALL NOT send to any other number.
 9. WHEN a `debt` Reminder is due, THE Dispatcher SHALL compute the debtor's Balance at that moment. IF the Balance is 0 or less, THEN THE Dispatcher SHALL skip the SMS and mark the Reminder `skipped`.
 10. THE Dispatcher SHALL mark a Reminder `sent` only after the send succeeds. IF a send fails, THEN THE Dispatcher SHALL retry on the next run, up to 3 attempts, and then mark the Reminder `failed`.
 11. WHEN the Dispatcher runs twice with the same data and the same clock, THE second run SHALL send no Reminder that the first run sent.
 12. THE Dispatcher SHALL check the kit rate limiter for the outbound direction before each send, and SHALL leave the Reminder `pending` when the limit is reached.
-13. THE Dispatcher SHALL NOT send to a Trader who has sent STOP, and SHALL mark such Reminders `skipped`. This depends on Open Question 2.
+13. THE Dispatcher SHALL call the kit's `isSubscribed(store, phoneNumber)` before each send, SHALL NOT send to a Trader for whom it returns false, and SHALL mark such Reminders `skipped`.
 14. THE due-check SHALL be a pure function that takes the Reminders and the current time, and returns the Reminders that are due, so a property test can cover it.
 15. THE reminder SMS SHALL say what it is for, name the debtor or supplier, show the amount when known, and end with a next step, and SHALL fit in at most 2 SMS segments.
 
@@ -190,7 +187,7 @@ The ledger, price statistics, command parser, reminder date parser and reminder 
 5. WHEN a Trader sends STOP, THE Oja_Ghost SHALL send no further Reminder to that Trader until START. The Ledger and Reminders SHALL be kept, so START restores service. Reminders that fall due while the Trader is stopped SHALL be marked `skipped`.
 6. THE Oja_Ghost SHALL NOT store a debtor's or supplier's phone number, and SHALL NOT offer a way to enter one.
 7. THE Oja_Ghost SHALL validate every tool input with `zod`, and SHALL treat message text as untrusted data.
-8. THE Oja_Ghost SHALL read the reporter-hash salt only from an environment variable listed in `.env.example`, and SHALL fail with a short error at startup, not at first use, when it is missing in production.
+8. THE Oja_Ghost SHALL read no environment variable and hold no secret. Its settings arrive through the `createOjaGhost` dependencies.
 9. User-facing errors SHALL be short and tell the Trader what to do next, such as "Try again. Send HELP for options.", and SHALL NOT contain a stack trace or an internal ID.
 
 ### Requirement 10: Feature-Phone UX, USSD Menu and Reply Limits
@@ -210,6 +207,8 @@ The ledger, price statistics, command parser, reminder date parser and reminder 
 9. THE Oja_Ghost SHALL NOT send a link as the only way to do something, and SHALL NOT use emoji or Halloween wording in any reply.
 10. THE Oja_Ghost SHALL accept `HELP` and `MENU` at any point and SHALL reply with the options in the Trader's Language.
 11. WHEN the Trader's message is not understood, THE Oja_Ghost SHALL reply with the `unrecognized` copy and up to 3 example commands.
+12. THE Oja_Ghost SHALL write every amount in a reply as the plain letter `N`, then digits with thousands separators and no decimals, such as `N1,500`, and SHALL NOT use the `₦` sign in any reply.
+13. EVERY reply, in both Languages, SHALL contain only GSM-7 characters, so that the kit reports encoding `GSM-7` for it. Debtor and supplier names typed by a Trader are echoed only when they are GSM-7. Otherwise THE Oja_Ghost SHALL ask for a name in plain letters.
 
 ### Requirement 11: Demo Data and Honest Labels
 
@@ -241,13 +240,26 @@ The ledger, price statistics, command parser, reminder date parser and reminder 
 8. WHEN a property test finds a counterexample, THE test file SHALL keep it as a named regression example with a comment that says what bug it found.
 9. THE property tests SHALL run under `pnpm test` and `pnpm test:pbt`.
 10. THE project MAY include example tests for the command parser in both Languages, the reply lengths for each tool, the `HandsetApp` shape, and one scripted walkthrough (price, report, owe, paid, balance, reminder). These are **optional**.
-11. THE architecture SHALL check Requirement 1.1 automatically, using the existing hook. This check is **optional**.
+11. THE architecture SHALL check Requirement 1.1 automatically, with a test that scans `apps/oja-ghost/src` for imports other than `@ghostline/kit`, `zod` and relative paths. This check is **optional**.
+12. THE project SHALL include a property-based test, **required**, that for any generated Price_Average, Balance and debtor name, the money formatter returns `N` followed by digits and commas only, and every reply template of both Languages, filled with generated values, is GSM-7 (Requirement 10.12 and 10.13).
+
+### Requirement 13: Kit Amendment, `isSubscribed`
+
+**User Story:** As an app developer, I want a public way to ask whether a number is subscribed, so that background sends respect STOP.
+
+#### Acceptance Criteria
+
+1. THE kit SHALL export `isSubscribed(store: Store, phoneNumber: string): Promise<boolean>` from `kit/src/index.ts`.
+2. THE function SHALL read the same record that `MessageProcessor` writes, and SHALL return `true` only when that record exists and its `subscribed` field is `true`. It SHALL return `false` when the record is missing, so a number that never messaged the service or that sent DELETE is not contacted.
+3. THE function SHALL NOT write to the store, and SHALL let a `StoreError` propagate.
+4. THE `MessageProcessor` and `isSubscribed` SHALL use one shared key builder inside the kit, so the two cannot drift apart.
+5. THE kit SHALL include a test that checks: a number is not subscribed before its first message; it is subscribed after an ordinary message; not subscribed after STOP; subscribed after START; not subscribed after DELETE. This is a **required** example test, and it SHALL be the first task in `tasks.md`.
+6. THIS amendment SHALL change no existing kit behaviour, and SHALL leave the existing kit tests passing.
 
 ## Open Questions for the Owner
 
-1. **`zod` in the app.** `Tool.inputSchema` needs a `z.ZodType`, but the kit does not export `zod`, and `zod` is approved only for `kit` and `phantom-handset`. Options: (a) approve `zod` for `apps/oja-ghost` (same range as `kit`), or (b) add a general `defineTool` helper to the kit that builds a schema from a small descriptor, so apps need no `zod`. Option (a) is smaller and is what these requirements assume.
-2. **STOP is not visible to the app.** The subscribed flag lives in a kit-internal store key. The Dispatcher needs it. Add a general `isSubscribed(store, phoneNumber)` to the kit's public API (kit-core change, outside this spec), or accept that Reminder SMS ignore STOP, which breaks `security.md`. Requirement 7.13 assumes the first option.
-3. **`₦` makes SMS UCS-2.** A reply with `₦` has 70 characters per single segment and 67 joined, so 3 segments hold about 200 characters instead of about 459. These requirements keep `₦` as `feature-phone-ux.md` says, and shorten replies to fit. The alternative is to send `N` in SMS and `₦` only in the handset.
+Questions 1 to 3 are resolved (2026-11-19): `zod` is approved for the app, the kit exports `isSubscribed` (Requirement 13), and replies use plain `N`. The numbers below are kept so earlier references still match.
+
 4. **Pidgin review.** The Pidgin phrases for the command words and replies need a native speaker to check them before the video.
 5. **Reminders on the demo phone.** The handset can only show replies to the user's own messages. A Reminder SMS needs a trigger in the demo. Options: a small "run reminders now" call in `phantom-handset/server`, or Night Shift ("Scout") calling the Dispatcher on a schedule. Not in this spec.
 6. **Swapping the stand-in.** Replacing the stand-in in `phantom-handset/server/apps.ts` needs a workspace dependency from `phantom-handset` to `@ghostline/oja-ghost`. This is outside this spec and will be a separate, small task after the design is approved.
