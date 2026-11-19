@@ -89,3 +89,10 @@ Every action Claude Code takes: date, what, why, files.
 ## 2026-11-19: Started Kiro on Phantom Handset tasks 12.1 to 14.1 (UI)
 - What: Asked Kiro to run the phone UI, screens, trace panel with split view and landing page tasks (optional tasks skipped), keeping all accessibility, reduced-motion and import-boundary rules, and stop after 14.1. Kiro writes the code; Claude Code will verify, including a visual check in the browser.
 - Files: `docs/claude-code-log.md`.
+
+## 2026-11-19: Verified Phantom Handset UI (tasks 12.1 to 14.1), built by Kiro
+- `pnpm test` (`FC_NUM_RUNS=1000`): 40 files, 267 pass; typecheck clean; `pnpm --filter phantom-handset build` succeeds (JS 295 kB, one OFL pixel font, which ships its OFL.txt). Production bundle has no `node:crypto` or `@aws-sdk`. `src/` has no runtime kit import, `node:`, storage, console or dangerouslySetInnerHTML.
+- Visual and live check in the built-in browser (dev server, `?view=split`): landing hero, demo label, graveyard, ITU statistic and cards render; no console errors. Dialled `*384#` through the phone with the Oja Ghost stand-in over the live API: LCD showed the paginated USSD menu and the trace panel showed reasoning, tool_call and tool_result with the number masked (`+234******5678`).
+- Not yet checked: real keyboard-only walkthrough, screen reader, reduced-motion toggle, phone-width layout, scripted mode and autoplay (Kiro's task 15.3 manual checklist; Claude Code to do what it can).
+- Honesty flag for the write-up: the landing page says a new app "needs about 300 lines". That claim must be backed by the real Oja Ghost/Blackout Line size before submission, or reworded.
+- Files by Kiro: `phantom-handset/src/{ui,landing,styles,trace/TracePanel.tsx,assets,App.tsx,main.tsx}`, `index.html`, config and fixture edits. Claude Code wrote none of it.

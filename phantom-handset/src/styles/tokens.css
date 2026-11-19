@@ -1,0 +1,61 @@
+/*
+ * Colour tokens (design section 10). Every foreground/background pair below was checked
+ * against WCAG 2.2 AA (4.5:1 text, 3:1 borders and focus). Do not change a value without
+ * re-running the contrast check.
+ */
+:root {
+  /* LCD */
+  --lcd-text: #0f2a10;
+  --lcd-bg: #9bd45c;
+  --lcd-dim: #2d5a1e;
+
+  /* Page */
+  --page: #0d0d12;
+  --text: #d9d4c7;
+  --muted: #9a96a8;
+  --accent: #ff8a3d;
+
+  /* Phone */
+  --casing: #14141a;
+  --key-face: #2b2b33;
+  --key-label: #f2efe6;
+  --key-border: #8c8c9c;
+  --focus: #ffd24a;
+
+  /* Trace panel */
+  --trace-text: #cfe8cf;
+  --trace-bg: #10161a;
+  --trace-dim: #a3b8a3;
+  --trace-border: #5d7a68;
+  --trace-current-bg: #1b2a33;
+
+  /* Decorative surfaces (no text or border contrast duty) */
+  --casing-hi: #1d1d26;
+  --casing-lo: #0f0f14;
+  --bezel: #07070a;
+
+  /* Call and End discs sit on the key face, so they only need 3:1 against it */
+  --call: #3fbf6a;
+  --end: #ef5350;
+  --disc-glyph: #0d0d12;
+
+  /* Demo label strip */
+  --strip-bg: #ff8a3d;
+  --strip-text: #0d0d12;
+
+  --font-lcd: 'VT323 Handset', 'Handset Fallback', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-ui: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+  font-family: var(--font-ui);
+}

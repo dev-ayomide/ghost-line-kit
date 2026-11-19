@@ -186,28 +186,28 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 12. Phone UI
 
-- [ ] 12.1 Build the phone shell, keyboard and accessibility layer
+- [x] 12.1 Build the phone shell, keyboard and accessibility layer
   - `ui/{Phone,Lcd,Keypad,SoftKeys,Announcer,KeyboardHelp}.tsx`, `ui/useKeyboard.ts`, and `styles/{tokens,phone,motion}.css` with the colour tokens from the design table (key borders at `#8c8c9c`), local font files, and hand-built CSS only
   - Every key is a focusable `<button>` with a visible focus ring and a name such as "2, ABC". The visible LCD is `aria-hidden`. `Announcer` has a polite region (updates only when the view key changes) and a `role="alert"` region for errors. `KeyboardHelp` is a native `<dialog>` opened with `?`. A "Skip to phone" link comes first. The key map and its three confirmed exceptions follow the design
   - All animation sits in `motion.css` under `prefers-reduced-motion: no-preference`; the LCD shows each page whole under reduce; nothing flashes more than three times per second
   - The demo label sits on the casing at all times
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 12.1, 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 13.8, 13.9, 13.10, 14.1, 14.2, 14.4_
 
-- [ ] 12.2 Wire the screens: home, apps, dial, USSD, messages, compose, settings
+- [x] 12.2 Wire the screens: home, apps, dial, USSD, messages, compose, settings
   - Home with installed apps from config, app switching with separate state, dial screen, USSD view with paginated reply and input line, Inbox, message view (MORE soft key), Compose (multi-tap on-screen, literal typing on the physical keyboard, live counter from `smsCount`), Sent, Settings (live or scripted toggle, sound, reset, fixture errors). Page navigation uses the position indicator ("2/4")
   - Server text is rendered as plain text only. No message text goes to `localStorage`, `sessionStorage`, cookies or the console
   - _Requirements: 3.8, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 7.1, 7.2, 7.3, 7.4, 9.3, 16.2, 16.5_
 
 ### 13. Trace panel and split view
 
-- [ ] 13.1 Implement `src/trace/TracePanel.tsx` and the split layout
+- [x] 13.1 Implement `src/trace/TracePanel.tsx` and the split layout
   - Side-by-side `Split` (stacked below 900 px) with a visible `aria-pressed` toggle, F4, and `?view=split`. The panel lists events in order (type, title, time, tool name, input and result summary), highlights the events of the exchange for the message on the LCD, shows "No trace for this message" when empty, and renders plain text only
   - Add the live/scripted toggle, the "Scripted replay" label, and the Autoplay controls (start, stop, speed). Start in scripted mode with `?mode=scripted`
   - _Requirements: 9.2, 9.7, 10.1, 10.3, 10.4, 10.6, 10.8, 12.2, 12.3_
 
 ### 14. Landing page
 
-- [ ] 14.1 Implement `src/landing/{Landing,Graveyard}.tsx`, replace the placeholder `App.tsx`, and fix the smoke test
+- [x] 14.1 Implement `src/landing/{Landing,Graveyard}.tsx`, replace the placeholder `App.tsx`, and fix the smoke test
   - Hero with the pitch and a "Try it" button that moves focus to the phone, the stage, the inline-SVG graveyard of dead phones with drifting fog only when motion is allowed, the ITU 2023 statistic with its source, cards for Oja Ghost, Blackout Line and the kit, and the footer with repo and quick-start links. All text comes from the config. No external images or fonts. The page is fully readable with animation off
   - Replace `App.tsx` with the real app, and update `test/smoke.test.tsx` (it still asserts "Phantom Handset coming soon", so `pnpm test` fails until it is changed) to check the landing title and the demo label
   - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 12.1, 14.1_

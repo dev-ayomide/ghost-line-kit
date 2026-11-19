@@ -1,0 +1,564 @@
+/* Static base styles. Complete without any animation (see motion.css). */
+
+/* Bundled pixel font: VT323, SIL OFL 1.1 (licence in src/assets/fonts/OFL.txt). No network. */
+@font-face {
+  font-family: 'VT323 Handset';
+  src: url('../assets/fonts/VT323-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Local monospace, scaled so a column is about as wide as in VT323 (keeps 16 columns inside the LCD). */
+@font-face {
+  font-family: 'Handset Fallback';
+  src: local('Menlo'), local('Consolas'), local('DejaVu Sans Mono'), local('Courier New');
+  size-adjust: 67%;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- skip link ---------- */
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  background: var(--page);
+  color: var(--text);
+  border: 2px solid var(--focus);
+  border-radius: 0.4rem;
+  font: 600 1rem var(--font-ui);
+}
+.skip-link:focus {
+  top: 0.5rem;
+}
+
+/* ---------- focus ring ---------- */
+.phone button:focus-visible,
+.kbd-help button:focus-visible,
+.kbd-help-open:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.phone:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 6px;
+}
+
+/* ---------- casing ---------- */
+.phone {
+  --u: clamp(11px, min(4.3vw, 1.75vh), 16px);
+  position: relative;
+  font-size: var(--u);
+  width: min(22em, 100%);
+  margin-inline: auto;
+  padding: 0 1.5em 2em;
+  border-radius: 3.6em 3.6em 4.4em 4.4em / 3em 3em 4.6em 4.6em;
+  background:
+    radial-gradient(120% 40% at 50% 0%, rgb(255 255 255 / 0.07), transparent 60%),
+    linear-gradient(165deg, var(--casing-hi) 0%, var(--casing) 45%, var(--casing-lo) 100%);
+  box-shadow:
+    inset 0 0.12em 0.15em rgb(255 255 255 / 0.14),
+    inset 0 -0.2em 0.4em rgb(0 0 0 / 0.6),
+    inset 0.15em 0 0.2em rgb(255 255 255 / 0.04),
+    0 0 0 0.12em #050507,
+    0 1.4em 2.4em rgb(0 0 0 / 0.65),
+    0 0.3em 0.6em rgb(0 0 0 / 0.5);
+  color: var(--key-label);
+  overflow: hidden;
+}
+
+.phone__strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3em 0.5em;
+  margin: 0 -1.5em;
+  padding: 0.55em 1.6em;
+  background: var(--strip-bg);
+  color: var(--strip-text);
+  font: 700 0.78em/1.25 var(--font-ui);
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+  box-shadow: inset 0 -0.15em 0 rgb(0 0 0 / 0.2);
+}
+.phone__strip-scripted {
+  padding: 0 0.5em;
+  border: 0.15em solid var(--strip-text);
+  border-radius: 0.6em;
+}
+
+.phone__top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+  padding: 1.1em 0 0.8em;
+}
+.phone__earpiece {
+  width: 5.5em;
+  height: 0.65em;
+  border-radius: 1em;
+  background: #050507;
+  box-shadow: inset 0 0.15em 0.2em rgb(0 0 0 / 0.9), 0 0.08em 0 rgb(255 255 255 / 0.12);
+}
+.phone__brand {
+  margin: 0;
+  padding: 0.15em 0.9em;
+  font: 800 0.8em/1.2 var(--font-ui);
+  letter-spacing: 0.35em;
+  color: var(--key-label);
+  border: 0.12em solid var(--key-border);
+  border-radius: 0.5em;
+  background: linear-gradient(180deg, #3a3a45, #23232b);
+  box-shadow: inset 0 0.1em 0 rgb(255 255 255 / 0.18), 0 0.1em 0.2em rgb(0 0 0 / 0.6);
+}
+
+/* ---------- LCD ---------- */
+.lcd-bezel {
+  padding: 0.9em;
+  border-radius: 1.2em;
+  background: linear-gradient(160deg, #15151b, var(--bezel));
+  box-shadow:
+    inset 0 0.2em 0.5em rgb(0 0 0 / 0.9),
+    0 0.1em 0 rgb(255 255 255 / 0.1),
+    0 -0.08em 0 rgb(0 0 0 / 0.7);
+}
+
+.lcd {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+  padding: 0.55em 0.7em 0.5em;
+  border-radius: 0.5em;
+  background: var(--lcd-bg);
+  color: var(--lcd-text);
+  font-family: var(--font-lcd);
+  line-height: 1;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0.25em 0.7em rgb(15 42 16 / 0.55),
+    inset 0 0 1.4em rgb(15 42 16 / 0.3),
+    0 0 1.2em rgb(155 212 92 / 0.28);
+}
+/* Pixel grid, backlight bloom and vignette. Decorative only. */
+.lcd::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background:
+    repeating-linear-gradient(0deg, rgb(15 42 16 / 0.09) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgb(15 42 16 / 0.07) 0 1px, transparent 1px 3px);
+}
+.lcd::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background:
+    radial-gradient(120% 90% at 50% 40%, rgb(230 255 190 / 0.18), transparent 60%),
+    radial-gradient(130% 110% at 50% 50%, transparent 55%, rgb(15 42 16 / 0.28) 100%);
+}
+.lcd > * {
+  position: relative;
+  z-index: 1;
+}
+
+.lcd__status {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 1.1em;
+  font-size: 1.35em;
+  color: var(--lcd-dim);
+  white-space: pre;
+}
+.lcd__signal {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 0.1em;
+  height: 0.75em;
+}
+.lcd__signal i {
+  display: block;
+  width: 0.14em;
+  background: var(--lcd-dim);
+}
+.lcd__signal i:nth-child(1) { height: 25%; }
+.lcd__signal i:nth-child(2) { height: 50%; }
+.lcd__signal i:nth-child(3) { height: 75%; }
+.lcd__signal i:nth-child(4) { height: 100%; }
+.lcd__signal i.is-off {
+  background: transparent;
+  box-shadow: inset 0 0 0 0.04em var(--lcd-dim);
+}
+.lcd__mail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+}
+.lcd__mail svg {
+  width: 1em;
+  height: 0.7em;
+}
+.lcd__app {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lcd__title {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5em;
+  padding: 0 0.2em;
+  font-size: 1.45em;
+  background: var(--lcd-text);
+  color: var(--lcd-bg);
+  white-space: pre;
+}
+
+.lcd__grid {
+  width: 16ch;
+  max-width: 100%;
+  margin-inline: auto;
+  font-size: 1.9em;
+  line-height: 0.95;
+}
+.lcd__line {
+  white-space: pre;
+  overflow: hidden;
+}
+
+.lcd__input {
+  display: flex;
+  align-items: center;
+  width: 16ch;
+  max-width: 100%;
+  margin-inline: auto;
+  font-size: 1.9em;
+  line-height: 0.95;
+  border-top: 0.05em solid var(--lcd-dim);
+  white-space: pre;
+  overflow: hidden;
+}
+.lcd__caret {
+  display: inline-block;
+  flex: none;
+  width: 0.45ch;
+  height: 0.8em;
+  margin-left: 0.05ch;
+  background: var(--lcd-text);
+}
+
+.lcd__softs {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5em;
+  padding: 0.15em 0.2em 0;
+  font-size: 1.6em;
+  font-weight: 400;
+  border-top: 0.05em solid var(--lcd-dim);
+  white-space: pre;
+}
+.lcd[data-busy='true'] .lcd__grid {
+  color: var(--lcd-dim);
+}
+
+/* ---------- controls ---------- */
+.phone__controls {
+  display: grid;
+  grid-template-columns: 1fr 1.7fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 0.7em 0.5em;
+  align-items: center;
+  justify-items: center;
+  margin-top: 1.1em;
+}
+
+.key {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75em;
+  min-height: 2.75em;
+  padding: 0;
+  font: 700 1.15em/1 var(--font-ui);
+  color: var(--key-label);
+  background: linear-gradient(180deg, #34343e, var(--key-face) 55%, #25252c);
+  border: 2px solid var(--key-border);
+  border-radius: 0.9em;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    inset 0 0.12em 0 rgb(255 255 255 / 0.18),
+    inset 0 -0.14em 0 rgb(0 0 0 / 0.35),
+    0 0.2em 0 #07070a,
+    0 0.35em 0.5em rgb(0 0 0 / 0.55);
+}
+.key:active,
+.key[data-pressed='true'] {
+  transform: translateY(0.14em);
+  box-shadow:
+    inset 0 0.2em 0.35em rgb(0 0 0 / 0.55),
+    0 0.06em 0 #07070a,
+    0 0.1em 0.2em rgb(0 0 0 / 0.5);
+}
+
+.key--soft {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: start;
+  width: 100%;
+  min-height: 2.4em;
+  border-radius: 1.4em 1.4em 0.7em 0.7em;
+}
+.key--soft-right {
+  grid-column: 3;
+}
+.key--soft::after {
+  content: '';
+  width: 1.3em;
+  height: 0.18em;
+  border-radius: 1em;
+  background: var(--key-label);
+  opacity: 0.8;
+}
+
+.key--call {
+  grid-column: 1;
+  grid-row: 2;
+  width: 100%;
+}
+.key--end {
+  grid-column: 3;
+  grid-row: 2;
+  width: 100%;
+}
+.key__disc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7em;
+  height: 1.7em;
+  border-radius: 50%;
+  background: var(--call);
+  box-shadow: inset 0 0.1em 0 rgb(255 255 255 / 0.35), inset 0 -0.1em 0.15em rgb(0 0 0 / 0.3);
+}
+.key--end .key__disc {
+  background: var(--end);
+}
+.key__disc svg {
+  width: 1.05em;
+  height: 1.05em;
+  fill: var(--disc-glyph);
+}
+
+/* Four-way nav key */
+.nav {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 8.4em;
+  height: 8.4em;
+  padding: 0.35em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #2a2a33, #15151b 70%);
+  border: 2px solid var(--key-border);
+  box-shadow: inset 0 0.15em 0.4em rgb(0 0 0 / 0.7), 0 0.1em 0 rgb(255 255 255 / 0.1);
+}
+.nav .key {
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.6em;
+  box-shadow: inset 0 0.1em 0 rgb(255 255 255 / 0.16), 0 0.12em 0 #07070a;
+}
+.nav .key:active {
+  transform: translateY(0.08em);
+}
+.nav__up { grid-area: 1 / 2; }
+.nav__left { grid-area: 2 / 1; }
+.nav__select { grid-area: 2 / 2; border-radius: 50% !important; }
+.nav__right { grid-area: 2 / 3; }
+.nav__down { grid-area: 3 / 2; }
+.key__arrow {
+  width: 0;
+  height: 0;
+  border: 0.42em solid transparent;
+}
+.key__arrow--up { border-bottom: 0.6em solid var(--key-label); border-top-width: 0; }
+.key__arrow--down { border-top: 0.6em solid var(--key-label); border-bottom-width: 0; }
+.key__arrow--left { border-right: 0.6em solid var(--key-label); border-left-width: 0; }
+.key__arrow--right { border-left: 0.6em solid var(--key-label); border-right-width: 0; }
+.key__dot {
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: 50%;
+  background: var(--key-label);
+}
+
+/* ---------- keypad ---------- */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75em 0.9em;
+  margin: 1.4em 0.2em 0;
+  padding: 0;
+  border: 0;
+}
+.keypad .key {
+  width: 100%;
+  min-height: 3.1em;
+  flex-direction: row;
+  gap: 0.35em;
+  border-radius: 0.9em 0.9em 1.5em 1.5em / 0.9em 0.9em 1.2em 1.2em;
+}
+.key__digit {
+  font-size: 1.35em;
+  font-weight: 800;
+}
+.key__letters {
+  font-size: 0.62em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 360px) {
+  .phone {
+    padding-inline: 1.1em;
+  }
+  .phone__strip {
+    margin-inline: -1.1em;
+  }
+}
+
+/* ---------- keyboard help dialog ---------- */
+.kbd-help {
+  width: min(32rem, calc(100vw - 2rem));
+  padding: 1.25rem 1.5rem;
+  background: var(--page);
+  color: var(--text);
+  border: 2px solid var(--key-border);
+  border-radius: 0.75rem;
+  font-family: var(--font-ui);
+}
+.kbd-help::backdrop {
+  background: rgb(0 0 0 / 0.7);
+}
+.kbd-help h2,
+.kbd-help h3 {
+  margin: 0 0 0.75rem;
+}
+.kbd-help h3 {
+  margin-top: 1.25rem;
+  font-size: 1rem;
+  color: var(--muted);
+}
+.kbd-help__rows {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+.kbd-help__row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) 2fr;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+.kbd-help dd {
+  margin: 0;
+}
+.kbd-help kbd {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  background: var(--key-face);
+  color: var(--key-label);
+  border: 2px solid var(--key-border);
+  border-radius: 0.4rem;
+  font: 600 0.9rem ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+.kbd-help ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+.kbd-help form {
+  margin-top: 1.25rem;
+  text-align: right;
+}
+.kbd-help__close,
+.kbd-help-open {
+  padding: 0.5rem 1rem;
+  background: var(--key-face);
+  color: var(--key-label);
+  border: 2px solid var(--key-border);
+  border-radius: 0.5rem;
+  font: 600 1rem var(--font-ui);
+  cursor: pointer;
+}
+
+/* Toolbar under the phone (task 12.2). */
+.handset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.handset__tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  max-width: 22rem;
+}
+.handset__tools button {
+  padding: 0.4rem 0.75rem;
+  background: var(--key-face);
+  color: var(--key-label);
+  border: 2px solid var(--key-border);
+  border-radius: 0.5rem;
+  font: 600 0.875rem var(--font-ui);
+  cursor: pointer;
+}
+.handset__tools button[aria-pressed='true'] {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  text-decoration: underline;
+}
+.handset__tools button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.handset__status {
+  flex-basis: 100%;
+  margin: 0;
+  text-align: center;
+  font: 0.875rem var(--font-ui);
+}

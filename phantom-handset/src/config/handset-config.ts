@@ -66,6 +66,8 @@ export interface HandsetConfig {
       busy: string;
       sending: string;
       newMessage: string;
+      /** Compose counter. Placeholders: {chars} and {segments}. */
+      counter: string;
     };
     softKeys: {
       select: string;
@@ -79,6 +81,31 @@ export interface HandsetConfig {
       clear: string;
       call: string;
       end: string;
+      /** Soft key on the offline notice: switch to scripted mode. */
+      scripted: string;
+    };
+    toolbar: {
+      label: string;
+      scriptedMode: string;
+      sound: string;
+      reset: string;
+      useScripted: string;
+    };
+    phone: {
+      /** Invented badge name on the casing, not a real trademark. */
+      brand: string;
+      phoneLabel: string;
+      lcdUnread: string;
+      signalLabel: string;
+      keypadLabel: string;
+      navLabel: string;
+      softLeftName: string;
+      softRightName: string;
+      navNames: { up: string; down: string; left: string; right: string; select: string };
+      keyNames: { star: string; hash: string; space: string };
+      announcerPolite: string;
+      announcerAlert: string;
+      busyLabel: string;
     };
     keyboardHelp: {
       title: string;
@@ -92,10 +119,24 @@ export interface HandsetConfig {
     landing: {
       title: string;
       pitch: string;
+      subPitch: string;
       tryIt: string;
-      stats: { text: string; ownPercent: number; usePercent: number; source: string };
+      stats: {
+        text: string;
+        ownPercent: number;
+        usePercent: number;
+        ownLabel: string;
+        useLabel: string;
+        sourceLabel: string;
+        source: string;
+      };
       graveyardTitle: string;
-      epitaphs: readonly string[];
+      graveyardIntro: string;
+      tombstones: readonly {
+        kind: 'brick' | 'flip' | 'cracked' | 'pager';
+        name: string;
+        epitaph: string;
+      }[];
       whyTitle: string;
       cards: readonly { id: string; title: string; text: string }[];
       footer: {
@@ -112,6 +153,40 @@ export interface HandsetConfig {
       splitToggle: string;
       activeMarker: string;
       eventTypes: { reasoning: string; tool_call: string; tool_result: string };
+      /** Decorative glyph per event type (aria-hidden); the text label carries the meaning. */
+      eventGlyphs: { reasoning: string; tool_call: string; tool_result: string };
+      listLabel: string;
+      current: string;
+      tool: string;
+      input: string;
+      result: string;
+      ok: string;
+      failed: string;
+      /** Placeholder: {ms}. */
+      duration: string;
+      /** Placeholder: {seconds}. */
+      relativeTime: string;
+    };
+    stage: {
+      label: string;
+      replayBanner: string;
+      replayFrameLabel: string;
+    };
+    autoplay: {
+      groupLabel: string;
+      start: string;
+      stop: string;
+      speed: string;
+      fixture: string;
+      /** Placeholder: {speed}. */
+      speedValue: string;
+      statusIdle: string;
+      statusRunning: string;
+      statusStopped: string;
+      statusDone: string;
+      liveHint: string;
+      switchToScripted: string;
+      noFixtures: string;
     };
   };
 }
@@ -210,6 +285,7 @@ export const handsetConfig = {
       busy: 'Please wait',
       sending: 'Sending',
       newMessage: 'New',
+      counter: 'Chars: {chars}\nSMS: {segments}',
     },
 
     softKeys: {
@@ -224,6 +300,31 @@ export const handsetConfig = {
       clear: 'Clear',
       call: 'Call',
       end: 'End',
+      scripted: 'Scripted',
+    },
+
+    toolbar: {
+      label: 'Phone tools',
+      scriptedMode: 'Scripted mode',
+      sound: 'Sound',
+      reset: 'Reset phone',
+      useScripted: 'Use scripted mode',
+    },
+
+    phone: {
+      brand: 'GHOSTEL',
+      phoneLabel: 'Phantom Handset, a feature phone emulator',
+      lcdUnread: 'New',
+      signalLabel: 'Signal',
+      keypadLabel: 'Phone keypad',
+      navLabel: 'Navigation key',
+      softLeftName: 'Left soft key',
+      softRightName: 'Right soft key',
+      navNames: { up: 'Up', down: 'Down', left: 'Left', right: 'Right', select: 'Select' },
+      keyNames: { star: 'star', hash: 'hash', space: 'space' },
+      announcerPolite: 'Screen text',
+      announcerAlert: 'Error',
+      busyLabel: 'Working',
     },
 
     keyboardHelp: {
@@ -252,19 +353,24 @@ export const handsetConfig = {
     landing: {
       title: 'Ghost Line Kit',
       pitch: 'Any phone, any outage, no one left behind',
+      subPitch: 'AI agents that answer by SMS and USSD on a $10 feature phone with no internet.',
       tryIt: 'Try it',
       stats: {
         text: 'In Africa, 63% of people own a mobile phone, but only 37% use the internet.',
         ownPercent: 63,
         usePercent: 37,
+        ownLabel: 'own a mobile phone',
+        useLabel: 'use the internet',
+        sourceLabel: 'Source',
         source: 'ITU 2023',
       },
       graveyardTitle: 'The graveyard of dead phones',
-      epitaphs: [
-        'Here lies the feature phone. Still working.',
-        'Here lies the data plan. Gone at midnight.',
-        'Here lies Wi-Fi. Lost in the storm.',
-        'Here lies the app store. Never had signal.',
+      graveyardIntro: 'Smartphones fall back to plain SMS when the data goes. Try the one phone that never died.',
+      tombstones: [
+        { kind: 'brick', name: 'Brick phone', epitaph: 'Here lies the feature phone. Still working.' },
+        { kind: 'flip', name: 'Flip phone', epitaph: 'Here lies the data plan. Gone at midnight.' },
+        { kind: 'cracked', name: 'Smartphone with a cracked screen', epitaph: 'Here lies Wi-Fi. Lost in the storm.' },
+        { kind: 'pager', name: 'Pager', epitaph: 'Here lies the app store. Never had signal.' },
       ],
       whyTitle: 'Why this exists',
       cards: [
@@ -299,6 +405,36 @@ export const handsetConfig = {
       splitToggle: 'Split view',
       activeMarker: 'Shown on phone',
       eventTypes: { reasoning: 'Reasoning', tool_call: 'Tool call', tool_result: 'Tool result' },
+      eventGlyphs: { reasoning: '\u25C7', tool_call: '\u25B6', tool_result: '\u25C0' },
+      listLabel: 'Reasoning and tool calls, in order',
+      current: 'Current',
+      tool: 'Tool',
+      input: 'Input',
+      result: 'Result',
+      ok: 'ok',
+      failed: 'failed',
+      duration: '{ms} ms',
+      relativeTime: '+{seconds} s',
+    },
+    stage: {
+      label: 'Phone stage',
+      replayBanner: 'Scripted replay, not a live alert',
+      replayFrameLabel: 'Scripted replay frame',
+    },
+    autoplay: {
+      groupLabel: 'Autoplay',
+      start: 'Start autoplay',
+      stop: 'Stop autoplay',
+      speed: 'Speed',
+      fixture: 'Replay',
+      speedValue: '{speed}x',
+      statusIdle: 'Autoplay is ready.',
+      statusRunning: 'Autoplay is running.',
+      statusStopped: 'Autoplay stopped.',
+      statusDone: 'Autoplay finished.',
+      liveHint: 'Autoplay needs scripted mode.',
+      switchToScripted: 'Switch to scripted mode',
+      noFixtures: 'No replay files loaded.',
     },
   },
 } as const satisfies HandsetConfig;

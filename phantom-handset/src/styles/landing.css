@@ -1,0 +1,415 @@
+/*
+ * Landing page chrome (task 14.1). Static and complete on its own: every animation for this
+ * page lives in motion.css under `prefers-reduced-motion: no-preference`.
+ * Halloween styling stays here, in the page chrome. Nothing themed reaches the LCD or a message.
+ * Contrast pairs used on this page are listed in the task report.
+ */
+:root {
+  --sky-top: #07070c;
+  --sky-bottom: #1a1426;
+  --ground-top: #0d0d12;
+  --ground-bottom: #101a14;
+  --card-bg: #14141a;
+  --card-border: #8c8c9c;
+  --silhouette: #050508;
+}
+
+.landing {
+  min-height: 100vh;
+  overflow-x: clip;
+}
+.landing a {
+  color: var(--accent);
+  text-underline-offset: 0.2em;
+}
+.landing a:focus-visible,
+.hero__cta:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* ---------- hero ---------- */
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: min(88svh, 52rem);
+  display: flex;
+  align-items: center;
+  padding: 5rem 1.5rem 9rem;
+  background: linear-gradient(180deg, var(--sky-top) 0%, #110d1b 55%, var(--sky-bottom) 100%);
+  overflow: hidden;
+}
+.hero__atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.hero__glow {
+  position: absolute;
+  left: -10%;
+  bottom: -30%;
+  width: 70%;
+  height: 90%;
+  background: radial-gradient(closest-side, rgb(155 212 92 / 0.16), transparent);
+}
+.hero__moon-glow {
+  position: absolute;
+  right: 3%;
+  top: 4%;
+  width: clamp(12rem, 30vw, 26rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(244 239 216 / 0.22), transparent);
+}
+.hero__moon {
+  position: absolute;
+  right: calc(3% + clamp(1.8rem, 4.5vw, 4rem));
+  top: calc(4% + clamp(1.8rem, 4.5vw, 4rem));
+  width: clamp(5rem, 12vw, 10rem);
+  height: auto;
+}
+.hero__skyline {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: clamp(6rem, 18vw, 11rem);
+}
+.skyline__shape {
+  fill: var(--silhouette);
+}
+.skyline__beacon {
+  fill: var(--accent);
+}
+.fog {
+  position: absolute;
+  left: -20%;
+  width: 140%;
+  height: 40%;
+  filter: blur(18px);
+}
+.fog--a {
+  bottom: 4%;
+  background: radial-gradient(60% 50% at 30% 60%, rgb(190 190 220 / 0.18), transparent),
+    radial-gradient(50% 60% at 75% 50%, rgb(190 190 220 / 0.14), transparent);
+}
+.fog--b {
+  bottom: -6%;
+  background: radial-gradient(55% 55% at 55% 55%, rgb(190 200 220 / 0.2), transparent),
+    radial-gradient(40% 50% at 12% 60%, rgb(190 190 220 / 0.12), transparent);
+}
+.pixel {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--lcd-bg);
+  opacity: 0.35;
+}
+.pixel--1 { left: 12%; top: 22%; }
+.pixel--2 { left: 30%; top: 58%; width: 6px; height: 6px; }
+.pixel--3 { left: 52%; top: 18%; width: 8px; height: 8px; opacity: 0.25; }
+.pixel--4 { left: 68%; top: 52%; width: 6px; height: 6px; }
+.pixel--5 { left: 84%; top: 70%; opacity: 0.2; }
+
+.hero__content {
+  position: relative;
+  max-width: 62rem;
+  width: 100%;
+  margin-inline: auto;
+}
+.hero__label {
+  display: inline-block;
+  margin: 0 0 1.25rem;
+  padding: 0.3rem 0.8rem;
+  border: 2px solid var(--accent);
+  border-radius: 0.3rem;
+  color: var(--accent);
+  background: rgb(13 13 18 / 0.7);
+  font: 600 0.95rem var(--font-ui);
+}
+.hero__h1 {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.hero__title {
+  font: 400 clamp(1.6rem, 4vw, 2.4rem) var(--font-lcd);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lcd-bg);
+  text-shadow: 0 0 14px rgb(155 212 92 / 0.55);
+}
+.hero__pitch {
+  max-width: 14ch;
+  font: 800 clamp(2.4rem, 7.2vw, 5rem) / 1.02 var(--font-ui);
+  color: var(--key-label);
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 30px rgb(0 0 0 / 0.6);
+}
+.hero__sub {
+  max-width: 36rem;
+  margin: 1.25rem 0 2rem;
+  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+  line-height: 1.5;
+  color: var(--text);
+}
+.hero__cta {
+  padding: 0.85rem 2rem;
+  border: 2px solid var(--accent);
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: var(--strip-text);
+  font: 800 1.2rem var(--font-ui);
+  cursor: pointer;
+  box-shadow: 0 0 28px rgb(255 138 61 / 0.35);
+}
+.hero__cta:hover {
+  background: #ffa066;
+}
+
+/* ---------- stage on the graveyard ground ---------- */
+.landing__main {
+  display: block;
+}
+.section-title {
+  margin: 0;
+  font: 700 clamp(1.5rem, 3.4vw, 2.2rem) var(--font-ui);
+  color: var(--key-label);
+}
+.ground {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  padding: 3rem 1rem 6rem;
+  background:
+    radial-gradient(60% 30% at 50% 0%, rgb(190 200 230 / 0.1), transparent),
+    linear-gradient(180deg, var(--ground-top) 0%, var(--ground-bottom) 100%);
+  overflow: hidden;
+}
+.ground__head {
+  max-width: 62rem;
+  margin: 0 auto 1.5rem;
+  text-align: center;
+}
+.ground__intro {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+}
+.ground__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  max-width: 110rem;
+  margin: 0 auto;
+}
+.ground__stage {
+  order: -1;
+  min-width: 0;
+}
+.landing .stage {
+  min-height: 100svh;
+  padding: 0.5rem 0;
+}
+.ground__fog {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -2rem;
+  height: 9rem;
+  z-index: -1;
+  pointer-events: none;
+  filter: blur(14px);
+  background:
+    radial-gradient(40% 60% at 20% 70%, rgb(190 200 220 / 0.16), transparent),
+    radial-gradient(45% 60% at 70% 80%, rgb(190 200 220 / 0.18), transparent);
+}
+
+/* tombstones */
+.graveyard {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.5rem 1rem;
+}
+.tomb {
+  margin: 0;
+  width: clamp(7.5rem, 38vw, 10.5rem);
+}
+.tomb__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.tomb--a { transform: rotate(-2.5deg); }
+.tomb--b { transform: rotate(2deg); }
+.tomb__mound { fill: #0a110c; }
+.tomb__body { fill: #26262f; stroke: #8c8c9c; stroke-width: 2; }
+.tomb__moon { fill: rgb(210 220 255 / 0.07); }
+.tomb__key { fill: #3d3d4a; }
+.tomb__hinge { stroke: #0d0d12; stroke-width: 4; }
+.tomb__crack { stroke: #0d0d12; stroke-width: 2; fill: none; }
+.tomb__crack-lcd { stroke: #2d5a1e; stroke-width: 2; fill: none; }
+.tomb__screen { fill: #0f2a10; stroke: #0d0d12; stroke-width: 2; }
+.tomb__text {
+  fill: #9bd45c;
+  font-family: var(--font-lcd);
+}
+
+@media (min-width: 1100px) {
+  .ground__grid {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: start;
+    gap: 1.5rem;
+  }
+  .ground__stage {
+    order: 0;
+  }
+  .graveyard {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 2.5rem;
+    padding-top: 4rem;
+  }
+  .graveyard--left { align-items: flex-end; }
+  .graveyard--right { align-items: flex-start; }
+  .tomb { width: clamp(8rem, 12vw, 11rem); }
+  .graveyard--right .tomb--a { margin-left: 2rem; }
+  .graveyard--left .tomb--b { margin-right: 2.5rem; }
+}
+/* with the split view open the stage is wide: flank only on very wide screens */
+@media (min-width: 1100px) and (max-width: 1699px) {
+  .ground__grid:has(.split--on) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ground__grid:has(.split--on) .ground__stage {
+    order: -1;
+  }
+  .ground__grid:has(.split--on) .graveyard {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    padding-top: 0;
+    gap: 0.5rem 1rem;
+  }
+  .ground__grid:has(.split--on) .tomb {
+    width: 9rem;
+    margin: 0;
+  }
+}
+
+/* ---------- why ---------- */
+.why {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 4rem;
+}
+.stat {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border: 2px solid var(--card-border);
+  border-radius: 0.75rem;
+  background: var(--card-bg);
+}
+.stat__rows {
+  display: grid;
+  gap: 1.25rem;
+}
+.stat__label {
+  margin: 0 0 0.4rem;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+.stat__num {
+  font: 400 clamp(2.4rem, 7vw, 3.6rem) / 1 var(--font-lcd);
+  color: var(--lcd-bg);
+  margin-right: 0.4rem;
+}
+.stat__track {
+  height: 1.6rem;
+  border: 2px solid var(--card-border);
+  border-radius: 0.3rem;
+  background: var(--casing-lo);
+  overflow: hidden;
+}
+.stat__fill {
+  height: 100%;
+}
+.stat__fill--own {
+  background: var(--lcd-bg);
+}
+/* stripes, so the two bars differ by pattern as well as by length and label */
+.stat__fill--use {
+  background: repeating-linear-gradient(45deg, var(--accent) 0 6px, #7a3a14 6px 12px);
+}
+.stat__caption {
+  margin-top: 1.25rem;
+  line-height: 1.5;
+}
+.stat__source {
+  color: var(--muted);
+  white-space: nowrap;
+}
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+}
+.card {
+  padding: 1.25rem;
+  border: 2px solid var(--card-border);
+  border-radius: 0.75rem;
+  background: var(--card-bg);
+}
+.card__title {
+  margin: 0 0 0.5rem;
+  font: 400 1.9rem / 1 var(--font-lcd);
+  color: var(--lcd-bg);
+}
+.card__text {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ---------- footer ---------- */
+.foot {
+  padding: 2.5rem 1.5rem 3rem;
+  border-top: 2px solid var(--card-border);
+  text-align: center;
+  background: var(--casing-lo);
+}
+.foot__links {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  font-weight: 700;
+}
+.foot__note,
+.foot__label {
+  margin: 0.3rem 0;
+  color: var(--muted);
+}
+.foot__label {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .hero {
+    padding: 3rem 1.25rem 7rem;
+  }
+  .ground {
+    padding-inline: 0.5rem;
+  }
+}

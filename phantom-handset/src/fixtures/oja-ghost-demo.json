@@ -120,6 +120,33 @@
       "trace": [
         { "type": "reasoning", "at": 10000, "title": "Asked for help", "summary": "Sender +234******5678 sent HELP. Showing the command list." }
       ]
+    },
+    {
+      "when": { "kind": "sms", "input": "STOP" },
+      "delayMs": 250,
+      "replies": [{ "text": "You are unsubscribed. Send START to join again." }],
+      "trace": [
+        { "type": "reasoning", "at": 11000, "title": "Keyword STOP handled", "summary": "Sender +234******5678 sent STOP." },
+        { "type": "reasoning", "at": 11040, "title": "Reply chosen", "summary": "Short plain reply, one segment." }
+      ]
+    },
+    {
+      "when": { "kind": "sms", "input": "START" },
+      "delayMs": 250,
+      "replies": [{ "text": "Welcome back. Send HELP for options." }],
+      "trace": [
+        { "type": "reasoning", "at": 12000, "title": "Keyword START handled", "summary": "Sender +234******5678 sent START." },
+        { "type": "reasoning", "at": 12040, "title": "Reply chosen", "summary": "Short plain reply, one segment." }
+      ]
+    },
+    {
+      "when": { "kind": "sms", "input": "DELETE" },
+      "delayMs": 250,
+      "replies": [{ "text": "Your data is erased. Send START to begin again." }],
+      "trace": [
+        { "type": "reasoning", "at": 13000, "title": "Keyword DELETE handled", "summary": "Sender +234******5678 sent DELETE." },
+        { "type": "reasoning", "at": 13040, "title": "Reply chosen", "summary": "Short plain reply, one segment." }
+      ]
     }
   ]
 }

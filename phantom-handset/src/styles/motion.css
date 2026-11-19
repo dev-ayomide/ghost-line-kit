@@ -1,0 +1,109 @@
+/*
+ * All animation lives here, and only when the user has not asked for reduced motion.
+ * phone.css is complete and static on its own, so reduced motion shows everything at once.
+ * Nothing flashes: the caret blinks at 1 Hz, the backlight changes slowly by a few percent.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .lcd {
+    animation: lcd-backlight 7s ease-in-out infinite;
+  }
+
+  .lcd__caret {
+    animation: lcd-caret 1s steps(1, end) infinite;
+  }
+
+  .key {
+    transition:
+      transform 110ms ease-out,
+      box-shadow 110ms ease-out;
+  }
+
+  .skip-link {
+    transition: top 120ms ease-out;
+  }
+
+  @keyframes lcd-backlight {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.965;
+    }
+  }
+
+  @keyframes lcd-caret {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+}
+
+/* ---------- landing page (task 14.1) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .fog--a {
+    animation: fog-drift-a 60s ease-in-out infinite alternate;
+  }
+  .fog--b {
+    animation: fog-drift-b 85s ease-in-out infinite alternate;
+  }
+  .ground__fog {
+    animation: fog-drift-b 70s ease-in-out infinite alternate;
+  }
+  .hero__moon-glow {
+    animation: moon-float 14s ease-in-out infinite;
+  }
+  .hero__glow,
+  .hero__title {
+    animation: lcd-glow 8s ease-in-out infinite;
+  }
+  .pixel {
+    animation: pixel-drift 22s ease-in-out infinite alternate;
+  }
+  .pixel--2 { animation-duration: 28s; }
+  .pixel--3 { animation-duration: 18s; }
+  .pixel--4 { animation-duration: 31s; }
+  .pixel--5 { animation-duration: 25s; }
+  .skyline__beacon {
+    animation: beacon 3s ease-in-out infinite;
+  }
+  .skyline__beacon--b {
+    animation-delay: 1.4s;
+  }
+  .hero__cta {
+    transition:
+      transform 120ms ease-out,
+      background-color 120ms ease-out;
+  }
+  .hero__cta:hover {
+    transform: translateY(-1px);
+  }
+  @keyframes fog-drift-a {
+    from { transform: translateX(-6%); }
+    to { transform: translateX(6%); }
+  }
+  @keyframes fog-drift-b {
+    from { transform: translateX(5%); }
+    to { transform: translateX(-5%); }
+  }
+  @keyframes moon-float {
+    0%, 100% { transform: translateY(0); opacity: 1; }
+    50% { transform: translateY(-8px); opacity: 0.85; }
+  }
+  @keyframes lcd-glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.82; }
+  }
+  @keyframes pixel-drift {
+    from { transform: translate(0, 0); }
+    to { transform: translate(24px, -40px); }
+  }
+  @keyframes beacon {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+}
