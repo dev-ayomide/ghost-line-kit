@@ -74,3 +74,8 @@ Every action Claude Code takes: date, what, why, files.
 ## 2026-11-19: Started Kiro on Phantom Handset tasks 8.1 and 9.1 (server)
 - What: Asked Kiro to run the two skipped server tasks (handler/wiring, Node wrapper and Vite plugin, including the SSR build and serve check), then stop and report. Kiro writes the code.
 - Files: `docs/claude-code-log.md`.
+
+## 2026-11-19: zod approved for phantom-handset server; Kiro resumed 8.1 and 9.1
+- Kiro asked before adding a dependency: the stand-in apps' tools need zod schemas (kit `Tool.inputSchema`). zod is already a kit dependency but was not listed in tech.md. Owner approved adding zod to phantom-handset (kit's version range, server/stand-in.ts only, never in `src/`). Recorded in `.kiro/steering/tech.md`. Rejected alternatives: a kit schema helper, casting plain objects.
+- Relayed the approval to Kiro and told it to run 8.1 and 9.1.
+- Files: `.kiro/steering/tech.md`, `docs/claude-code-log.md`.
