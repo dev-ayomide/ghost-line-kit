@@ -85,3 +85,7 @@ Every action Claude Code takes: date, what, why, files.
 - Live checks by Claude Code: started `vite` dev server; `/api/health`, `/api/config` (kit limits), POST `/api/web/oja-ghost` with `channel: 'ussd'` returned the menu plus a live trace (reasoning, tool_call, tool_result) with the phone number masked; a `from` outside the fake range gave `INVALID_FROM`; unknown app gave `UNKNOWN_APP`. Built and ran the standalone server (`pnpm run serve`): health and a blackout-line POST worked. Starting with `HOST=0.0.0.0` and no token is refused. So the SSR-bundling risk resolved (kit TypeScript bundled with the AWS SDK; Kiro noted why in `vite.config.ts`).
 - Note: live mode currently runs stand-in apps until the Oja Ghost and Blackout Line specs land.
 - Files by Kiro: `phantom-handset/server/*`, `vite.config.ts`, `tsconfig.server.json`, `.env.example`. Claude Code wrote none of it.
+
+## 2026-11-19: Started Kiro on Phantom Handset tasks 12.1 to 14.1 (UI)
+- What: Asked Kiro to run the phone UI, screens, trace panel with split view and landing page tasks (optional tasks skipped), keeping all accessibility, reduced-motion and import-boundary rules, and stop after 14.1. Kiro writes the code; Claude Code will verify, including a visual check in the browser.
+- Files: `docs/claude-code-log.md`.
