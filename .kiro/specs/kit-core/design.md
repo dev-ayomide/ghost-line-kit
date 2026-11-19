@@ -701,3 +701,10 @@ The following are tested with examples or integration tests, not PBT, because th
 2. **AWS SDK v3 packages.** Approved by the user. `@aws-sdk/client-bedrock-runtime` (for Bedrock Converse API) and `@aws-sdk/client-dynamodb` + `@aws-sdk/lib-dynamodb` (for DynamoDB) are added to `kit/package.json`. They are imported only inside `BedrockProvider` and `DynamoStore`, never in interfaces or public types. Recorded in `.kiro/steering/tech.md`.
 
 3. **Bedrock model invocation format.** The `BedrockProvider` uses the Bedrock **Converse API** (`Converse` command), which is model-agnostic. The model id comes from `BEDROCK_MODEL_ID` (passed to the constructor or read from `process.env.BEDROCK_MODEL_ID`). The same code works with any Bedrock-supported model without model-specific payload handling.
+
+### Amendment 2026-11-19 (from the `phantom-handset` spec)
+
+Two small, backward-compatible additions. Both are specified in `.kiro/specs/phantom-handset/design.md` (Open questions 1 and 2) and implemented by tasks 1.1 to 2.2 of `.kiro/specs/phantom-handset/tasks.md`.
+
+1. **Trace events.** `MessageProcessorConfig` gains an optional `onTrace?: TraceSink`. Types `TraceEvent`, `TraceEventType` and `TraceSink` live in `kit/src/trace.ts` and are exported from `index.ts`. The processor emits `reasoning`, `tool_call` and `tool_result` events synchronously, in order. Rules: with no sink nothing is built; the sink is called inside `try/catch` so a failing sink never changes replies, logs or stored state; `summary` is redacted in the kit (sender number masked with `maskPhoneNumber`, at most 200 characters) and never contains the raw inbound text; `title` is at most 80 characters; events never go to the logger. `Agent`, `ToolRegistry` and the logger are unchanged.
+2. **Optional `channel` on the web payload.** `webPayloadSchema` accepts `channel: 'web' | 'ussd'` (optional). `WebAdapter.parseWebhook` returns `channel: parsed.channel ?? 'web'` on the inbound message. The adapter's own `channel` stays `'web'`. Any other value is rejected as `INVALID_PAYLOAD`.

@@ -46,3 +46,8 @@ Every action Claude Code takes: date, what, why, files.
 ## 2026-11-19: Started Kiro on Phantom Handset tasks 1.1 to 2.3 (kit amendments)
 - What: Told Kiro (chat "Phantom Handset") to run tasks 1.1 to 2.3 with the spec-task-execution sub-agent and stop after 2.3. Kiro is doing all the code; Claude Code will verify when it reports.
 - Files: `docs/claude-code-log.md`.
+
+## 2026-11-19: Verified Phantom Handset tasks 1.1 to 2.3 (kit amendments), built by Kiro
+- Ran `pnpm test` with `FC_NUM_RUNS=1000`: 38 files, 250 tests pass (up from 232). `pnpm typecheck` clean across all packages.
+- Reviewed the diff: `onTrace` is inert without a sink, called in try/catch, summaries redacted (exact and digits-only sender number, 200 char cap), titles cut at 80; web `channel` accepts only 'web' | 'ussd'. No Date.now or AWS SDK use added. Kit-core design.md has the amendment note.
+- Files by Kiro: `kit/src/trace.ts`, `kit/src/processor.ts`, `kit/src/channels/web-adapter.ts`, `kit/src/index.ts`, `kit/test/trace.test.ts`, `kit/test/trace.pbt.test.ts`, `kit/test/web-adapter-channel.test.ts`, spec docs. Claude Code wrote none of it.

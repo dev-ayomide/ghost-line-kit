@@ -17,7 +17,7 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 1. Kit-core amendment A: trace events
 
-- [ ] 1.1 Add `onTrace` to the message processor
+- [x] 1.1 Add `onTrace` to the message processor
   - Create `kit/src/trace.ts` (types only): `TraceEventType`, `TraceEvent` (`type`, `messageId`, `at`, `title`, optional `tool`, `ok`, `summary`, `durationMs`) and `TraceSink`, exactly as in design.md Open question 1
   - Add `onTrace?: TraceSink` to `MessageProcessorConfig` in `kit/src/processor.ts`, and keep the injected `clock` so `durationMs` and `at` use it
   - Add one private `emit()` helper that builds the event, calls the sink inside `try/catch`, and does nothing when no sink is set. Add one `redactSummary(value, senderPhone)` helper: `JSON.stringify` (a failure or `undefined` gives `[unserialisable]`), replace the sender number, in both exact and digits-only form, with `maskPhoneNumber(number)`, then cut to 200 characters. Cut `title` to 80 characters
@@ -25,36 +25,36 @@ All tests are from the approved design. Property-based tests (PBT) are **require
   - Export the types `TraceEvent`, `TraceEventType` and `TraceSink` from `kit/src/index.ts`. Do not change `Agent`, `ToolRegistry` or the logger
   - _Requirements: phantom-handset 10.2, 10.5, 10.9, 16.1; design Open question 1_
 
-- [ ] 1.2 Write the required example test for trace events in `kit/test/trace.test.ts`
+- [x] 1.2 Write the required example test for trace events in `kit/test/trace.test.ts`
   - A full classified run emits the `reasoning` (classify), `tool_call` and `tool_result` events in that order, all with the same `messageId`, and `tool_call` comes before `tool_result`
   - STOP, a refused rate limit, MORE and an unrecognized message each emit their one `reasoning` event with the specified title
   - A run with no `onTrace` returns the same messages as before
   - Reuse `kit/test/processor-helpers.ts`
   - _Requirements: phantom-handset 10.2, 10.9_
 
-- [ ] 1.3 Write the required PBT: a failing sink never changes the result, in `kit/test/trace.pbt.test.ts`
+- [x] 1.3 Write the required PBT: a failing sink never changes the result, in `kit/test/trace.pbt.test.ts`
   - **Property:** for any inbound text, the messages returned by `process()` with a sink that always throws equal the messages returned with no sink, and the store contents are equal
   - _Requirements: phantom-handset 10.9; design Open question 1 (rule "never breaks the pipeline")_
 
-- [ ] 1.4 Write the required PBT: summaries are bounded and redacted, in `kit/test/trace.pbt.test.ts`
+- [x] 1.4 Write the required PBT: summaries are bounded and redacted, in `kit/test/trace.pbt.test.ts`
   - **Property:** for any generated sender number (with and without `+`) and tool input or output that contains it, no event `summary` is longer than 200 characters, no `title` is longer than 80 characters, and no `summary` contains the unmasked number or its digits-only form
   - Generators include nested objects, long strings, and values that cannot be serialised
   - _Requirements: phantom-handset 10.5, 16.1; design Open question 1 (rule "redaction happens in the kit")_
 
 ### 2. Kit-core amendment B: optional `channel` on the web payload
 
-- [ ] 2.1 Accept an optional `channel` in `WebAdapter`
+- [x] 2.1 Accept an optional `channel` in `WebAdapter`
   - In `kit/src/channels/web-adapter.ts`, add `channel: z.enum(['web', 'ussd']).optional()` to `webPayloadSchema`
   - `parseWebhook` returns `channel: parsed.channel ?? 'web'` on the inbound message. The adapter's own `channel` property stays `'web'`. Update the doc comment
   - Any other value, such as `'sms'`, is rejected as `INVALID_PAYLOAD`
   - _Requirements: phantom-handset 5.1, 5.4, 8.3; design Open question 2_
 
-- [ ] 2.2 Write the required test for the web channel in `kit/test/web-adapter-channel.test.ts`
+- [x] 2.2 Write the required test for the web channel in `kit/test/web-adapter-channel.test.ts`
   - Omitted `channel` gives `'web'`. `'ussd'` gives `'ussd'`. `'sms'` and a non-string value give `INVALID_PAYLOAD`. The existing web adapter tests still pass
   - A `ussd` inbound from `parseWebhook` run through `MessageProcessor.process()` returns exactly one message
   - _Requirements: phantom-handset 5.1, 5.4; design Open question 2_
 
-- [ ] 2.3 Checkpoint: kit amendments
+- [x] 2.3 Checkpoint: kit amendments
   - Run `pnpm test` and `pnpm typecheck`. All kit tests must pass
   - Append a short "Amendment 2026-11-19" note to `.kiro/specs/kit-core/design.md` for the `onTrace` callback and the optional web `channel`, and point to this spec
 

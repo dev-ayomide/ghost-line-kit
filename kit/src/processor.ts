@@ -37,6 +37,7 @@ import { UNRECOGNIZED_INTENT, type Intent } from './agent/intent.js';
 import type { ChannelType, InboundMessage, OutboundMessage } from './channels/types.js';
 import { internalErrorCode, KitError, toUserMessage } from './errors.js';
 import { detectEncoding } from './format/encoding.js';
+import { maskPhoneNumber } from './format/phone.js';
 import { formatReply } from './format/reply.js';
 import { LIMITS } from './limits.js';
 import type { SafeLogger } from './logger.js';
@@ -44,6 +45,7 @@ import type { RateLimiter } from './rate-limiter.js';
 import type { Clock } from './session/clock.js';
 import type { SessionStateMachine } from './session/session-state-machine.js';
 import type { Store } from './store/store.js';
+import type { TraceEvent, TraceSink } from './trace.js';
 
 export interface ProcessorCopy {
   stopped: string;
@@ -87,6 +89,31 @@ export interface MessageProcessorConfig {
   buildToolCall?: (intent: Intent, ctx: ToolContext) => ToolCall;
   renderOutput?: (output: unknown, ctx: ToolContext) => string;
   eraseUserData?: (phoneNumber: string) => Promise<void>;
+  /** Optional observer for trace events. Never receives raw message text. Never affects the result. */
+  onTrace?: TraceSink;
+}
+
+const TRACE_TITLE_MAX = 80;
+const TRACE_SUMMARY_MAX = 200;
+
+/**
+ * Single-line, bounded summary of any value. The sender's number (exact and
+ * digits-only form) is replaced with its masked form before the cut.
+ */
+function redactSummary(value: unknown, senderPhone: string): string {
+  let json: string | undefined;
+  try {
+    json = JSON.stringify(value);
+  } catch {
+    json = undefined;
+  }
+  if (typeof json !== 'string') return '[unserialisable]';
+  let out = json;
+  const masked = maskPhoneNumber(senderPhone);
+  const digits = senderPhone.replace(/\D/g, '');
+  if (senderPhone !== '') out = out.split(senderPhone).join(masked);
+  if (digits !== '') out = out.split(digits).join(masked);
+  return out.slice(0, TRACE_SUMMARY_MAX);
 }
 
 interface UserRecord {
@@ -143,8 +170,12 @@ export class MessageProcessor {
   private readonly buildToolCall: (intent: Intent, ctx: ToolContext) => ToolCall;
   private readonly renderOutput: (output: unknown, ctx: ToolContext) => string;
   private readonly eraseUserData?: (phoneNumber: string) => Promise<void>;
+  private readonly clock: Clock;
+  private readonly onTrace?: TraceSink;
 
   constructor(config: MessageProcessorConfig) {
+    this.clock = config.clock;
+    this.onTrace = config.onTrace;
     this.store = config.store;
     this.session = config.session;
     this.agent = config.agent;
@@ -193,6 +224,25 @@ export class MessageProcessor {
     });
   }
 
+  /** Builds and delivers one trace event. Does nothing without a sink. Never throws. */
+  private emit(
+    messageId: string,
+    event: Omit<TraceEvent, 'messageId' | 'at'>,
+  ): void {
+    const sink = this.onTrace;
+    if (sink === undefined) return;
+    try {
+      sink({
+        ...event,
+        messageId,
+        at: this.clock.now(),
+        title: event.title.slice(0, TRACE_TITLE_MAX),
+      });
+    } catch {
+      // A faulty sink must never change message handling.
+    }
+  }
+
   private async run(inbound: InboundMessage, messageId: string): Promise<OutboundMessage[]> {
     const phone = inbound.from;
     const channel = inbound.channel;
@@ -203,6 +253,7 @@ export class MessageProcessor {
     if (keyword === 'STOP' || keyword === 'DELETE' || keyword === 'START') {
       await this.rateLimiter.check(phone, 'inbound');
       const reply = await this.handleKeyword(keyword, inbound, messageId);
+      this.emit(messageId, { type: 'reasoning', title: `Keyword ${keyword} handled` });
       return this.finish(inbound, messageId, this.render(reply, inbound, false));
     }
 
@@ -214,6 +265,7 @@ export class MessageProcessor {
 
     if (!(await this.rateLimiter.check(phone, 'inbound'))) {
       this.log(inbound, messageId, 'RATE_LIMITED');
+      this.emit(messageId, { type: 'reasoning', title: 'Rate limit reached' });
       return this.finish(
         inbound,
         messageId,
@@ -224,6 +276,7 @@ export class MessageProcessor {
     if (user === undefined) await this.store.write<UserRecord>(userKey(phone), { subscribed: true });
 
     if (keyword === 'MORE') {
+      this.emit(messageId, { type: 'reasoning', title: 'Sending the rest of a long reply' });
       const pending = await this.store.read<PendingRecord>(pendingKey(phone));
       if (pending === undefined || typeof pending.text !== 'string' || pending.text === '') {
         await this.store.delete(pendingKey(phone));
@@ -237,12 +290,41 @@ export class MessageProcessor {
     const ctx: ToolContext = { phoneNumber: phone, channel, conversationState: s.conversationState };
 
     const intent = await this.agent.classify(inbound.text);
+    const unrecognized = intent.name === UNRECOGNIZED_INTENT;
+    if (this.onTrace !== undefined) {
+      this.emit(messageId, {
+        type: 'reasoning',
+        title: unrecognized
+          ? 'Not understood, asking the user to try HELP'
+          : `Understood as "${intent.name}"`,
+        summary: redactSummary(intent.parameters, phone),
+      });
+    }
     let text: string;
-    if (intent.name === UNRECOGNIZED_INTENT) {
+    if (unrecognized) {
       text = this.copy.unrecognized;
     } else {
       const call = this.buildToolCall(intent, ctx);
+      if (this.onTrace !== undefined) {
+        this.emit(messageId, {
+          type: 'tool_call',
+          title: `Calling ${call.name}`,
+          tool: call.name,
+          summary: redactSummary(call.input, phone),
+        });
+      }
+      const startedAt = this.clock.now();
       const result = await this.agent.invokeTool(call.name, call.input);
+      if (this.onTrace !== undefined) {
+        this.emit(messageId, {
+          type: 'tool_result',
+          title: result.ok ? `${call.name} finished` : `${call.name} failed`,
+          tool: call.name,
+          ok: result.ok,
+          durationMs: this.clock.now() - startedAt,
+          summary: result.ok ? redactSummary(result.output, phone) : redactSummary(result.userMessage, phone),
+        });
+      }
       text = result.ok ? this.renderOutput(result.output, ctx) : result.userMessage;
     }
     if (typeof text !== 'string' || text.trim() === '') text = this.copy.done;

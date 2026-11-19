@@ -11,11 +11,16 @@ import type {
   WebhookResult,
 } from './types.js';
 
-/** Payload the Phantom Handset posts. Unknown extra fields are ignored. */
+/**
+ * Payload the Phantom Handset posts. Unknown extra fields are ignored.
+ * `channel` is optional and says which channel the handset is emulating:
+ * 'web' (default) or 'ussd'. Any other value is rejected.
+ */
 export const webPayloadSchema = z.object({
   from: z.string().min(1),
   text: z.string(),
   sessionId: z.string().optional(),
+  channel: z.enum(['web', 'ussd']).optional(),
 });
 
 export interface WebAdapterOptions {
@@ -29,6 +34,10 @@ type DeliverHandler = (message: OutboundMessage) => void | Promise<void>;
  *
  * Authentication: none. The Phantom Handset route is for development and demo
  * and must not expose private data. The deployment decides how to protect it.
+ *
+ * The adapter's own `channel` is always 'web'. An inbound message carries the
+ * channel named in the payload ('web' or 'ussd', default 'web'), so the handset
+ * can emulate USSD sessions through this adapter.
  *
  * This adapter never logs.
  */
@@ -75,12 +84,13 @@ export class WebAdapter implements ChannelAdapter {
       return { ok: false, error: { code: 'INVALID_PAYLOAD', message: 'Invalid request.' } };
     }
     const { from, text, sessionId } = parsed.data;
+    const channel = parsed.data.channel ?? 'web';
     return {
       ok: true,
       inbound: {
         from,
         text,
-        channel: 'web',
+        channel,
         ...(sessionId !== undefined ? { sessionId } : {}),
         timestamp: this.clock.now(),
       },

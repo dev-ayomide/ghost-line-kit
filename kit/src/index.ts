@@ -74,3 +74,4 @@ export type { SafeLogger } from './logger.js';
 // Message processor
 export { MessageProcessor, DEFAULT_PROCESSOR_COPY } from './processor.js';
 export type { ProcessorCopy, ToolContext, MessageProcessorConfig } from './processor.js';
+export type { TraceEvent, TraceEventType, TraceSink } from './trace.js';
