@@ -1,4 +1,5 @@
 import type { Intent } from './intent.js';
+import { KitError, UNAVAILABLE_USER_MESSAGE } from '../errors.js';
 
 /**
  * The only way apps may call a language model. Apps never import a model SDK
@@ -23,17 +24,18 @@ export interface LlmProvider {
  * Thrown when a model call fails. `message` is short and generic: it never
  * includes the prompt, the user message or the SDK error text. The original
  * error is kept in `cause` for server-side diagnosis only.
- *
- * Note: task 7.1 may make this extend `KitError` once errors.ts exists.
  */
-export class LlmError extends Error {
+export class LlmError extends KitError {
   readonly operation: 'complete' | 'classifyIntent';
   override readonly cause: unknown;
-  /** Safe text to show an end user (GSM-7, within the error length limit). */
-  readonly userMessage = 'Service briefly unavailable. Try again in a moment.';
 
   constructor(operation: 'complete' | 'classifyIntent', cause?: unknown) {
-    super('Language model call failed');
+    super({
+      code: 'LLM_ERROR',
+      userMessage: UNAVAILABLE_USER_MESSAGE,
+      internalMessage: 'Language model call failed',
+      cause,
+    });
     this.name = 'LlmError';
     this.operation = operation;
     this.cause = cause;

@@ -1,3 +1,5 @@
+import { KitError, UNAVAILABLE_USER_MESSAGE } from '../errors.js';
+
 /**
  * Key-value persistence used for session state, user preferences and app data.
  *
@@ -24,16 +26,19 @@ export interface Store {
  *
  * The message is short and never contains the stored value. The original
  * error is kept in `cause` for logs.
- *
- * Note: task 7.1 may make this extend `KitError` once errors.ts exists.
  */
-export class StoreError extends Error {
+export class StoreError extends KitError {
   readonly operation: 'read' | 'write' | 'delete';
   readonly key: string;
   override readonly cause: unknown;
 
   constructor(operation: 'read' | 'write' | 'delete', key: string, cause?: unknown) {
-    super(`Store ${operation} failed`);
+    super({
+      code: 'STORE_ERROR',
+      userMessage: UNAVAILABLE_USER_MESSAGE,
+      internalMessage: `Store ${operation} failed`,
+      cause,
+    });
     this.name = 'StoreError';
     this.operation = operation;
     this.key = key;

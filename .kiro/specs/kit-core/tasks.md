@@ -270,28 +270,28 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
 
 ### 7. Message Processor and Cross-Cutting
 
-- [ ] 7.1 Implement `KitError` in `kit/src/errors.ts`
+- [x] 7.1 Implement `KitError` in `kit/src/errors.ts`
   - `KitError extends Error` with `userMessage` (≤160 chars, no stack traces or internal IDs, includes ≥1 recovery action), `internalMessage` (for logs only), and `code` (internal error code like `'AT_API_ERROR'`, `'RATE_LIMITED'`)
   - Example user messages: `"Too many messages. Wait 1 min and try again."`, `"That didn't work. Send HELP for options."`, `"Service briefly unavailable. Try again in a moment."`
   - _Requirements: 17.1, 17.2, 17.3_
-  - [ ]* 7.1a Write example tests for error safety in `kit/test/errors.test.ts`
+  - [x]* 7.1a Write example tests for error safety in `kit/test/errors.test.ts`
     - Test `userMessage` is ≤160 characters (Req 17.1)
     - Test `userMessage` excludes stack traces and internal IDs (Req 17.2)
     - Test `userMessage` includes at least one suggested recovery action (Req 17.3)
     - _Requirements: 17.1, 17.2, 17.3_
 
-- [ ] 7.2 Implement `checkRateLimit` in `kit/src/rate-limiter.ts`
+- [x] 7.2 Implement `checkRateLimit` in `kit/src/rate-limiter.ts`
   - `checkRateLimit(state: RateLimitState, direction: 'inbound' | 'outbound', nowMs: number, limits: { windowMs: number; max: number }): { allowed: boolean; newState: RateLimitState }`
   - Filters out timestamps older than `windowMs`, counts remaining entries, returns `allowed: true` if count is below `max`, along with updated state (includes new timestamp if allowed)
   - Import `LIMITS.rateLimit` for default window and max values
   - Export `RateLimitState`, `RateLimitConfig` types from this file
   - _Requirements: 16.1, 16.2, 16.3_
-  - [ ] 7.2a Write PBT for rate limit correctness in `kit/test/rate-limit.pbt.test.ts`
+  - [x] 7.2a Write PBT for rate limit correctness in `kit/test/rate-limit.pbt.test.ts`
     - **Property 10: Rate limit correctness** — `checkRateLimit` allows a message iff the count within `windowMs` is below max (10); when all prior timestamps expired, next message is allowed and new state contains only the new timestamp
     - Generator: rate-limit states with 0–15 timestamps at varying ages relative to `nowMs` (some within window, some expired), combined with current `nowMs`
     - **Validates: Requirements 16.1, 16.2, 16.3**
 
-- [ ] 7.3 Implement `SafeLogger`, `ProductionLogger`, `DevLogger` in `kit/src/logger.ts`
+- [x] 7.3 Implement `SafeLogger`, `ProductionLogger`, `DevLogger` in `kit/src/logger.ts`
   - `SafeLogger` interface: `info(event: { messageId?, phoneNumber?, messageLength?, event }): void`, `error(event: { messageId?, phoneNumber?, messageLength?, error }): void`
   - `ProductionLogger` logs only message IDs, message lengths, error indications, and masked phone numbers; never logs message bodies
   - `DevLogger` is more verbose but still masks phone numbers and omits message bodies
@@ -304,7 +304,7 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
     - Test phone numbers are masked in all log output
     - _Requirements: 18.1, 18.2, 18.3_
 
-- [ ] 7.4 Implement `MessageProcessor` in `kit/src/processor.ts`
+- [x] 7.4 Implement `MessageProcessor` in `kit/src/processor.ts`
   - Constructor takes `{ adapter, store, session, agent, clock, rateLimiter, logger }`
   - `process(inbound: InboundMessage): Promise<OutboundMessage[]>` pipeline:
     1. Rate-limit check (inbound) — reject if phone number exceeded `maxInbound` in `windowMs`
@@ -317,17 +317,17 @@ Tasks are ordered so each builds on the previous: limits first, then the format 
     8. Log — log message ID, length, and status via `SafeLogger`; never log body
   - Wrap all processing in try/catch; any unhandled error becomes a `KitError` with a generic user message
   - _Requirements: 15.1, 15.2, 15.3, 16.1, 16.2, 16.3, 17.1, 17.2, 17.3, 18.1, 18.2, 18.3_
-  - [ ]* 7.4a Write example tests for STOP/DELETE handling in `kit/test/stop-delete.test.ts`
+  - [x]* 7.4a Write example tests for STOP/DELETE handling in `kit/test/stop-delete.test.ts`
     - Test STOP unsubscribes phone number and sends confirmation (Req 15.1)
     - Test DELETE erases stored data and sends confirmation (Req 15.2)
     - Test STOP when not subscribed sends "not subscribed" message (Req 15.3)
     - _Requirements: 15.1, 15.2, 15.3_
 
-- [ ] 7.5 Implement public API in `kit/src/index.ts`
+- [x] 7.5 Implement public API in `kit/src/index.ts`
   - Re-export the full public API: `LIMITS` from `limits.ts`; `detectEncoding`, `GSM7_CHARS`, `Encoding` from `format/encoding.ts`; `pureSplit`, `splitMessage`, `SplitResult` from `format/split.ts`; `renderMenuScreen`, `renderMenuScreens`, `MenuOption`, `MenuConfig` from `format/menu.ts`; `maskPhoneNumber` from `format/phone.ts`; `formatReply`, `ReplyOpts`, `ReplyResult` from `format/reply.ts`; `Clock`, `SystemClock`, `TestClock` from `session/clock.ts`; `SessionStateMachine`, `SessionState`, `SessionStatus`, `SessionEvent` from `session/session-state-machine.ts`; `ChannelAdapter`, `ChannelType`, `OutboundMessage`, `InboundMessage`, `SendResult`, `WebhookResult`, `DeliveryStatus` from `channels/types.ts`; `WebAdapter` from `channels/web-adapter.ts`; `SmsAdapter` from `channels/sms-adapter.ts`; `UssdAdapter`, `formatResponse` from `channels/ussd-adapter.ts`; `Intent`, `IntentSchema`, `serializeIntent`, `parseIntent` from `agent/intent.ts`; `Tool`, `ToolRegistry`, `ToolResult` from `agent/tool-registry.ts`; `LlmProvider` from `agent/llm-provider.ts`; `BedrockProvider` from `agent/bedrock-provider.ts`; `Agent` from `agent/agent.ts`; `Store` from `store/store.ts`; `MemoryStore` from `store/memory-store.ts`; `DynamoStore` from `store/dynamo-store.ts`; `KitError` from `errors.ts`; `checkRateLimit`, `RateLimitState` from `rate-limiter.ts`; `SafeLogger`, `ProductionLogger`, `DevLogger` from `logger.ts`; `MessageProcessor` from `processor.ts`
   - Ensure `kit/package.json` `exports` map resolves `"."` to `./src/index.ts` (already configured) so subpath imports like `@ghostline/kit/src/format/split` are not resolvable
   - _Requirements: 13.1, 13.2, 13.3_
-  - [ ]* 7.5a Write encapsulation tests in `kit/test/encapsulation.test.ts`
+  - [x]* 7.5a Write encapsulation tests in `kit/test/encapsulation.test.ts`
     - Test that all public API symbols are exported from `@ghostline/kit` (Req 13.1, 13.2)
     - Test that importing a kit internal module directly (e.g., `@ghostline/kit/src/format/split`) fails to resolve (Req 13.3)
     - _Requirements: 13.1, 13.2, 13.3_
