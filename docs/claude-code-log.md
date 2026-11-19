@@ -42,3 +42,7 @@ Every action Claude Code takes: date, what, why, files.
 - Result: approved. Kit amendments come first (1.1-1.4 trace events with the three required tests, 2.1-2.2 optional web `channel` with test, 2.3 checkpoint). Required PBTs: paginator (5.2), composer (6.2), plus the two trace PBTs (1.3, 1.4). Optional example/integration tests are starred. `@types/node` is the only dependency. Dependency waves are consistent (types and amendments before server and transports). Final checkpoint (15.3) includes a bundle check for `node:crypto` and `@aws-sdk` in the browser build.
 - Next: have Kiro execute groups 1-2 (kit amendments), then verify.
 - Files: `.kiro/specs/phantom-handset/tasks.md`, `docs/claude-code-log.md`.
+
+## 2026-11-19: Started Kiro on Phantom Handset tasks 1.1 to 2.3 (kit amendments)
+- What: Told Kiro (chat "Phantom Handset") to run tasks 1.1 to 2.3 with the spec-task-execution sub-agent and stop after 2.3. Kiro is doing all the code; Claude Code will verify when it reports.
+- Files: `docs/claude-code-log.md`.
