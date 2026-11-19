@@ -70,3 +70,7 @@ Every action Claude Code takes: date, what, why, files.
 - Ran `pnpm test` with `FC_NUM_RUNS=1000`: 40 files, 266 pass; typecheck clean. Browser `src/` still has no runtime kit import, `node:`, storage or console use.
 - Gap found: tasks 8.1 (server handler/wiring) and 9.1 (Node wrapper, Vite plugin) are unchecked and `phantom-handset/server/` does not exist, although Kiro's report covered transports, fixtures and state. Asked Kiro to run 8.1 and 9.1 next. The live path and the SSR risk check are therefore still untested.
 - Files by Kiro: `phantom-handset/src/{fixtures,state,trace,transport}`, `src/sms/counter.ts` (isComposable change), spec docs.
+
+## 2026-11-19: Started Kiro on Phantom Handset tasks 8.1 and 9.1 (server)
+- What: Asked Kiro to run the two skipped server tasks (handler/wiring, Node wrapper and Vite plugin, including the SSR build and serve check), then stop and report. Kiro writes the code.
+- Files: `docs/claude-code-log.md`.
