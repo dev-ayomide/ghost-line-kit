@@ -60,3 +60,8 @@ Every action Claude Code takes: date, what, why, files.
 - Ran `pnpm test` with `FC_NUM_RUNS=1000`: 40 files, 266 tests pass (paginator P1-P4 and composer C1-C3 property tests included). `pnpm typecheck` clean in all packages, including the new `tsconfig.server.json`.
 - Checked: `src/` has no non-type `@ghostline/kit` import, no `node:` import, no `localStorage`; only added dependency is `@types/node` (approved). `.gitignore` change is the `dist-server` line; `.kiro/` untouched. Paginator reviewed: token-preserving wrap, code-point lengths, RangeError on bad size. Minor note: pages left with no lines are omitted (design said blank page edges dropped), harmless.
 - Files by Kiro: `phantom-handset/{shared,src/config,src/lcd,src/keypad,src/sms,test/*.pbt.test.ts,tsconfig.server.json,package.json}`, `pnpm-lock.yaml`, tasks.md ticks. Claude Code wrote none of it.
+
+## 2026-11-19: Started Kiro on Phantom Handset tasks 8.1 to 11.2, with one decision
+- Kiro found that the kit's `detectEncoding` treats the GSM extension characters (`^ { } \ [ ~ ] |` and the euro sign) as UCS-2, so the planned `charCost` of 2 would under-count segments. Kiro recommended making `isComposable` reject those characters so Compose can never produce them and `charCost` is always 1. Claude Code relayed approval (a design decision made on the owner's standing instruction to proceed; no kit change). Kiro also confirmed the repo URL and listed small deviations (extra `letter` field on multi-tap pending state, workspace link for `@ghostline/kit`).
+- Told Kiro to run 8.1 to 11.2 (server handler and wiring, Node wrapper and Vite plugin, transports, fixtures, state layer), skipping optional tasks, and stop after 11.2.
+- Files: `docs/claude-code-log.md`.
