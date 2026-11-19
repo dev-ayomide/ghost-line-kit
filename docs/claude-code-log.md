@@ -107,3 +107,7 @@ Every action Claude Code takes: date, what, why, files.
 - Manual checks by Claude Code in the built-in browser: scripted mode with `?mode=scripted&view=split` at 375x812 mobile (dark scheme): no horizontal scroll, phone 363 px wide, "Scripted replay" label shown, dialling `*384#` returns the fixture menu on the LCD. All animation rules sit inside `prefers-reduced-motion: no-preference` (checked `motion.css` and `trace.css`).
 - Still manual and not done: real screen-reader pass, OS-level reduced-motion toggle live, keyboard-only pass by a human, split view with live trace verified earlier. Task 15.3 stays unticked until the owner is happy with those.
 - Files by Kiro: `README.md`, `handset-config.ts`, tasks.md. Claude Code wrote none of it.
+
+## 2026-11-19: Started Kiro on Spec 3 (oja-ghost) requirements
+- What: Opened a new Kiro chat ("Build OjaGhost spec") and sent the Spec 3 brief from `docs/KICKOFF.md` (price check, price reports with outlier rejection, debt book, reminders, English and Pidgin, the three property tests, demo-labelled seed data), asking for requirements.md only, built on the kit's public API and matching the HandsetApp shape the Phantom Handset server expects. Kiro writes the spec; Claude Code reviews.
+- Files: `docs/claude-code-log.md`.
