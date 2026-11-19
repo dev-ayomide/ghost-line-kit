@@ -60,7 +60,7 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 3. Project setup
 
-- [ ] 3.1 Set up `phantom-handset` for the browser and the server
+- [x] 3.1 Set up `phantom-handset` for the browser and the server
   - Add `@types/node` as a `devDependency` in `phantom-handset/package.json` (already approved, recorded in `tech.md`). Add no other dependency
   - Add `tsconfig.server.json` (`types: ["node"]`, no DOM) covering `server/` and `shared/`. Update `tsconfig.json` (DOM, `vite/client`) to cover `src/` and `test/` only. Make `typecheck` run both
   - Add `shared/api.ts` with types only, from the design: `Limits` (from `typeof LIMITS`), `ServerConfig`, `SendRequest`, `SendResponse`, `ApiError`, and `HandsetTraceEvent = Omit<TraceEvent, 'messageId'>`, all using `import type` from `@ghostline/kit`
@@ -69,7 +69,7 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 4. Handset_Config
 
-- [ ] 4.1 Write `src/config/handset-config.ts`
+- [x] 4.1 Write `src/config/handset-config.ts`
   - One typed `as const satisfies HandsetConfig` module with the interfaces from the design: `lcd` (default 6 rows × 16 columns), `dialMaxLen`, `multitap` (timeout and letters per key), `fakeFrom` (`+2340000005678`), `fakeFromMasked` (`+234******5678`), `moreHint` (`Reply MORE`), the two `apps` profiles (ids `oja-ghost` and `blackout-line`, placeholder USSD codes and short codes to confirm in the app specs, `ussdOpenText: 'MENU'`), and `copy` for the demo label, scripted label, errors, menus, soft keys, keyboard help, landing page and trace panel
   - Error copy is short and says what to do next. No spooky wording appears in anything shown on the LCD. A missing key must fail `tsc`
   - _Requirements: 2.2, 7.1, 7.3, 7.5, 12.1, 15.1, 15.2, 15.3, 15.4_
@@ -80,12 +80,12 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 5. LCD paginator
 
-- [ ] 5.1 Implement `src/lcd/paginate.ts`
+- [x] 5.1 Implement `src/lcd/paginate.ts`
   - `paginate(text, { rows, cols }): Page[]` as specified in the design: split on `\n`, tokenise on spaces and tabs, fill lines greedily by code-point length, break tokens longer than `cols` on code-point boundaries starting on a fresh line, group `rows` lines per page, drop blank lines at page edges, and return one empty page for empty input. `rows < 1` or `cols < 1` throws `RangeError`
   - No React or DOM imports
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7_
 
-- [ ] 5.2 Write the required PBT for the paginator in `test/paginate.pbt.test.ts`
+- [x] 5.2 Write the required PBT for the paginator in `test/paginate.pbt.test.ts`
   - **P1:** non-whitespace code points of all pages, in order, equal those of the input (nothing dropped, duplicated or reordered)
   - **P2:** the tokens read back from the pages equal `expectedTokens(input, cols)`, where tokens of length ≤ `cols` stay whole and longer tokens become consecutive `cols`-sized chunks (so no amount, number, phone number or word is split)
   - **P3:** every line has ≤ `cols` code points with no leading or trailing space, every page has ≤ `rows` lines, and no page is whitespace-only except the single page for empty input
@@ -96,12 +96,12 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 6. Keypad composer
 
-- [ ] 6.1 Implement `src/keypad/compose.ts` and `src/keypad/keymap.ts`
+- [x] 6.1 Implement `src/keypad/compose.ts` and `src/keypad/keymap.ts`
   - Export `HandsetKey`, `applyKey`, `composeKeys`, `parseUssd`, `formatUssd` (`compose.ts`) and `keyForChar`, `keyFromKeyboardEvent` (`keymap.ts`) as in the design. `applyKey` ignores presses beyond `maxLen`, and `clear` on an empty buffer is a no-op. `keyFromKeyboardEvent` reads `event.key` and maps Backspace to `clear`
   - No React or DOM imports
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 6.2 Write the required PBT for the composer in `test/compose.pbt.test.ts`
+- [x] 6.2 Write the required PBT for the composer in `test/compose.pbt.test.ts`
   - **C1:** for any digit/`*`/`#` key sequence with no `clear`, `composeKeys` returns the characters in press order, cut at `maxLen`
   - **C2:** for any mix of keys and `clear`, `composeKeys` equals a reference model (array with push and pop); `clear` on empty stays empty
   - **C3:** for any generated USSD code (`*` digits (`*` digits)* `#`, up to `maxLen`), mapping each character through `keyForChar` and through `keyFromKeyboardEvent({ key: c })` then `composeKeys` returns the code, and `formatUssd(parseUssd(code)) === code`
@@ -110,11 +110,11 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 7. Multi-tap and SMS counter
 
-- [ ] 7.1 Implement `src/keypad/multitap.ts`
+- [x] 7.1 Implement `src/keypad/multitap.ts`
   - Pure reducer `step(state, { key, at }, cfg)` with `state = { text, pending?: { key, index, at } }`. A repeat press within `cfg.timeoutMs` advances through the key's letters. A different key or a press after the timeout commits the pending letter first. It never reads a clock. Letters come from the Handset_Config, and all are GSM-7
   - _Requirements: 4.6, 4.7_
 
-- [ ] 7.2 Implement `src/sms/counter.ts`
+- [x] 7.2 Implement `src/sms/counter.ts`
   - `charCost(c)` (2 for `^ { } \ [ ~ ] |` and `€`, otherwise 1) and `smsCount(text, limits)` returning `{ chars, segments }` with the limits passed in (no hard-coded numbers). Add a `isComposable(c)` helper: printable ASCII except the backtick
   - _Requirements: 6.3, 1.5_
 

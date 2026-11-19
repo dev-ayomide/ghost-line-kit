@@ -55,3 +55,8 @@ Every action Claude Code takes: date, what, why, files.
 ## 2026-11-19: Started Kiro on Phantom Handset tasks 3.1 to 7.2
 - What: Told Kiro to run tasks 3.1 to 7.2 (project setup, Handset_Config, paginator, keypad composer, multi-tap, SMS counter; optional starred tasks skipped) and stop after 7.2. Kiro writes the code; Claude Code verifies afterwards.
 - Files: `docs/claude-code-log.md`.
+
+## 2026-11-19: Verified Phantom Handset tasks 3.1 to 7.2, built by Kiro
+- Ran `pnpm test` with `FC_NUM_RUNS=1000`: 40 files, 266 tests pass (paginator P1-P4 and composer C1-C3 property tests included). `pnpm typecheck` clean in all packages, including the new `tsconfig.server.json`.
+- Checked: `src/` has no non-type `@ghostline/kit` import, no `node:` import, no `localStorage`; only added dependency is `@types/node` (approved). `.gitignore` change is the `dist-server` line; `.kiro/` untouched. Paginator reviewed: token-preserving wrap, code-point lengths, RangeError on bad size. Minor note: pages left with no lines are omitted (design said blank page edges dropped), harmless.
+- Files by Kiro: `phantom-handset/{shared,src/config,src/lcd,src/keypad,src/sms,test/*.pbt.test.ts,tsconfig.server.json,package.json}`, `pnpm-lock.yaml`, tasks.md ticks. Claude Code wrote none of it.
