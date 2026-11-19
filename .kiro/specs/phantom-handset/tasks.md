@@ -218,7 +218,7 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 15. Documentation and final checkpoint
 
-- [ ] 15.1 Add the Phantom Handset section to `README.md`
+- [x] 15.1 Add the Phantom Handset section to `README.md`
   - How to run: live (`pnpm dev`), scripted (`?mode=scripted`), split view (`?view=split`), standalone server (`serve`), the env variables, the access-token rule for non-loopback use, and the keyboard map. Note that the web endpoint is demo-only
   - _Requirements: 8.9, 8.10, 13.3_
 
@@ -228,7 +228,8 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 - [ ] 15.3 Final checkpoint
   - Run `pnpm test`, `pnpm test:pbt`, `pnpm typecheck` and `pnpm --filter phantom-handset build`. All must pass, and the production build must contain no `node:crypto` or `@aws-sdk` code
-  - Manually check: keyboard-only use of every screen, scripted mode with the network off, Reduced Motion (OS setting toggled live), screen-reader announcement of an LCD change, and the split view with a live trace once the kit amendment is in place
+  - **Automated checks: done 2026-11-19.** `pnpm test` (267 passed), `pnpm test:pbt` at 1000 runs (67 passed), `pnpm typecheck` (all four packages), `pnpm build` (root), client bundle scan (no `node:crypto`, `@aws-sdk`, `HANDSET_`, `BEDROCK` or `WEBHOOK_SECRET` strings), source boundary scans (no non-type kit import, no zod in `src/`, no storage APIs or `console.` in `src/`, no kit-internal imports in `server/`), and no `.env` tracked
+  - **Manual checks: PENDING (owner).** Keyboard-only use of every screen; scripted mode with the network off; Reduced Motion toggled live in the OS setting; screen-reader announcement of an LCD change; split view with a live trace against the running server (`pnpm dev`, live mode); Settings screen, offline soft-key path and the Blackout Line replay banner in a real browser; the phone at 320 to 390 px wide in a real narrow viewport
   - _Requirements: 1.3, 9.1, 13.2, 13.6, 14.3, 17.6_
 
 ## Notes

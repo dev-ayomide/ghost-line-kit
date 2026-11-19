@@ -387,7 +387,7 @@ export const handsetConfig = {
         {
           id: 'kit',
           title: 'The kit',
-          text: 'An open-source skeleton for SMS and USSD agents. A new app needs about 300 lines.',
+          text: 'An open-source skeleton for SMS and USSD agents. A new app is a config file, a few tools and a menu.',
         },
       ],
       footer: {

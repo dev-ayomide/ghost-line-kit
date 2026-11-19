@@ -101,3 +101,9 @@ Every action Claude Code takes: date, what, why, files.
 - What: Asked Kiro to write the Phantom Handset README section (15.1), run the automated checks for 15.3, leave the manual browser checks to Claude Code, and reword the unprovable landing line "A new app needs about 300 lines" to a provable one. Kiro writes the code and text.
 - Note: Kiro's UI tab opened a terminal panel with a vite preview on port 4173 during its checks.
 - Files: `docs/claude-code-log.md`.
+
+## 2026-11-19: Verified Phantom Handset 15.1 (README) and checkpoint 15.3 partly, built by Kiro
+- Reran `pnpm test` (`FC_NUM_RUNS=1000`): 40 files, 267 pass; typecheck 0 errors; build OK; no `node:crypto` or `@aws-sdk` in `dist`. The "about 300 lines" claim is gone from `src` and README. README section reviewed: run modes, keyboard map, env table, access-token rule, demo-only warning; it states the USSD codes are placeholders.
+- Manual checks by Claude Code in the built-in browser: scripted mode with `?mode=scripted&view=split` at 375x812 mobile (dark scheme): no horizontal scroll, phone 363 px wide, "Scripted replay" label shown, dialling `*384#` returns the fixture menu on the LCD. All animation rules sit inside `prefers-reduced-motion: no-preference` (checked `motion.css` and `trace.css`).
+- Still manual and not done: real screen-reader pass, OS-level reduced-motion toggle live, keyboard-only pass by a human, split view with live trace verified earlier. Task 15.3 stays unticked until the owner is happy with those.
+- Files by Kiro: `README.md`, `handset-config.ts`, tasks.md. Claude Code wrote none of it.
