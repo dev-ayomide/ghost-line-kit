@@ -36,3 +36,9 @@ Every action Claude Code takes: date, what, why, files.
 - Owner (user) approved: `@types/node` dev dependency for phantom-handset (recorded in `.kiro/steering/tech.md`); both kit-core amendments (onTrace trace callback, optional `channel` on the web payload). Claude Code relayed these to Kiro along with confirmations of open questions 4, 5 and 6 (HandsetApp shape, ussdOpenText default MENU, three small deviations), and asked Kiro for a lean tasks.md (about 15 tasks, kit amendments first, PBTs required).
 - Incident: while typing the reply, Siri took keyboard focus and about 590 characters landed in the open kit-core requirements.md editor tab instead of Kiro's chat. It was never saved (git showed no change to that file); I undid it with Cmd+Z, confirmed the text was gone, and git status shows only the tech.md edit. Retyped into Kiro's chat.
 - Files: `.kiro/steering/tech.md`, `docs/claude-code-log.md`.
+
+## 2026-11-19: Phantom Handset tasks.md written by Kiro; reviewed by Claude Code
+- What: Reviewed `.kiro/specs/phantom-handset/tasks.md` (15 task groups, 261 lines). Checked it against the approved design and decisions. No content written by Claude Code.
+- Result: approved. Kit amendments come first (1.1-1.4 trace events with the three required tests, 2.1-2.2 optional web `channel` with test, 2.3 checkpoint). Required PBTs: paginator (5.2), composer (6.2), plus the two trace PBTs (1.3, 1.4). Optional example/integration tests are starred. `@types/node` is the only dependency. Dependency waves are consistent (types and amendments before server and transports). Final checkpoint (15.3) includes a bundle check for `node:crypto` and `@aws-sdk` in the browser build.
+- Next: have Kiro execute groups 1-2 (kit amendments), then verify.
+- Files: `.kiro/specs/phantom-handset/tasks.md`, `docs/claude-code-log.md`.
