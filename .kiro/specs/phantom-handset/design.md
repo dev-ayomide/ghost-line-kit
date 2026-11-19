@@ -131,14 +131,14 @@ export function formatUssd(p: UssdParse): string
 
 **Multi-tap** (`multitap.ts`, R4.6, R4.7) is a pure reducer: `step(state, { key, at }, cfg) → state`, where `state = { text, pending?: { key, index, at } }`. A repeat press of the same key within `cfg.timeoutMs` advances `index` through the key's letters. A different key, or a press after the timeout, commits the pending letter first. The reducer takes timestamps as input, so it never reads a clock. The key-to-letters table lives in the Handset_Config. All letters are GSM-7. An optional multi-tap property (reference model over generated key/gap sequences) is listed in the task plan as optional.
 
-**Physical keyboard in Compose.** On-screen keys multi-tap. The physical keyboard types literal characters in the Compose screen, because typing "1500" must not produce ".". The Compose screen accepts printable ASCII except the backtick, which is not in GSM-7. See Open question 6.
+**Physical keyboard in Compose.** On-screen keys multi-tap. The physical keyboard types literal characters in the Compose screen, because typing "1500" must not produce ".". The Compose screen accepts printable ASCII except the backtick and the characters the kit does not count as GSM-7 (`^ { } \ [ ~ ] |`; the euro sign is outside ASCII). Decision 2026-11-19: this keeps the counter consistent with the kit's `detectEncoding`, with no kit change. See Open question 6.
 
 ### 3. SMS counter (`src/sms/counter.ts`) — Req 6.3
 
 The browser never runs `detectEncoding`. The Compose screen only accepts GSM-7 characters, so the UCS-2 branch can never occur.
 
 ```ts
-export function charCost(c: string): 1 | 2            // 2 for the GSM extension set ^ { } \ [ ~ ] | and €
+export function charCost(c: string): 1                 // every composable character costs 1 (extension characters are rejected by isComposable)
 export function smsCount(text: string, limits: SmsLimits): { chars: number; segments: number }
 // segments = chars <= limits.gsm7.singleSegment ? 1 : ceil(chars / limits.gsm7.concatSegment)
 ```

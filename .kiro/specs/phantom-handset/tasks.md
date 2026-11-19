@@ -115,12 +115,12 @@ All tests are from the approved design. Property-based tests (PBT) are **require
   - _Requirements: 4.6, 4.7_
 
 - [x] 7.2 Implement `src/sms/counter.ts`
-  - `charCost(c)` (2 for `^ { } \ [ ~ ] |` and `€`, otherwise 1) and `smsCount(text, limits)` returning `{ chars, segments }` with the limits passed in (no hard-coded numbers). Add a `isComposable(c)` helper: printable ASCII except the backtick
+  - `charCost(c)` (always 1; decision 2026-11-19: extension characters are rejected instead of counted twice, to match the kit's `detectEncoding`) and `smsCount(text, limits)` returning `{ chars, segments }` with the limits passed in (no hard-coded numbers). Add a `isComposable(c)` helper: printable ASCII except the backtick and `^ { } \ [ ~ ] |` (the euro sign is not ASCII)
   - _Requirements: 6.3, 1.5_
 
 - [ ]* 7.3 Write optional tests
   - `test/multitap.pbt.test.ts`: a reference-model property over generated key and gap sequences, plus determinism (same input and timings, same text)
-  - `test/counter.test.ts`: examples for 160/161 and 153-per-segment boundaries and the extension characters
+  - `test/counter.test.ts`: examples for 160/161 and 153-per-segment boundaries, and that `isComposable` rejects the extension characters
   - _Requirements: 4.6, 4.7, 6.3_
 
 ### 8. Server: handler and wiring
@@ -152,13 +152,13 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 10. Transports, trace guard and fixtures
 
-- [ ] 10.1 Implement `src/transport/{types,live,scripted}.ts` and `src/trace/guard.ts`
+- [x] 10.1 Implement `src/transport/{types,live,scripted}.ts` and `src/trace/guard.ts`
   - `HandsetTransport`, `TransportError`, `LiveTransport` (10 s timeout with `AbortController`, `VITE_API_BASE`, optional `Authorization: Bearer` from the `#token=` URL fragment kept in memory only, hand-written response guards, network failure gives `kind: 'offline'`) and `ScriptedTransport` (no network)
   - `isTraceEvent(x): x is HandsetTraceEvent` as in the design (type is one of three, `at` finite, `title` ≤ 120 characters, optional fields typed). Failing events are dropped
   - No `@ghostline/kit` runtime import, no `localStorage`, no console logging of message text
   - _Requirements: 1.1, 1.4, 1.5, 6.8, 9.3, 10.7, 16.2, 16.5_
 
-- [ ] 10.2 Implement `src/fixtures/schema.ts`, the loader, and two starter fixtures
+- [x] 10.2 Implement `src/fixtures/schema.ts`, the loader, and two starter fixtures
   - `parseFixture(raw, name)` returns `{ ok, fixture } | { ok: false, error }`, where the error names the file and the field. Reject a `ussd` reply longer than `limits.ussd.screenHardCap`. Load with `import.meta.glob('./*.json', { eager: true })`
   - Matching: USSD exact after trim, SMS case-insensitive after trim, steps in order, hint copy with the accepted inputs when nothing matches
   - Add `oja-ghost-demo.json` (USSD menu, prices, debt "book") and `blackout-line-demo.json` (menu, alert in action-then-source form with no emoji, "I'm OK" check-in), each with trace events. Copy follows the feature-phone UX rules: no word, amount or number split, USSD replies within 160 characters
@@ -170,11 +170,11 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 11. State layer
 
-- [ ] 11.1 Implement `src/state/reducer.ts` and `src/state/selectors.ts`
+- [x] 11.1 Implement `src/state/reducer.ts` and `src/state/selectors.ts`
   - The pure `HandsetState`, actions, reducer and `selectLcdView(state, config)` from the design: per-app slices (inbox, sent, unread, USSD session), screens, dial buffer, compose state, exchanges with trace, notices, split view, and a reset action. DELETE confirmation clears that app's inbox and sent. The reducer has no timers and no I/O
   - _Requirements: 5.2, 5.4, 5.6, 5.7, 6.2, 6.5, 7.2, 7.4, 16.6_
 
-- [ ] 11.2 Implement the hooks `src/state/useHandset.ts`, `useSessionTimer.ts`, `useReducedMotion.ts` and `useAutoplay.ts`
+- [x] 11.2 Implement the hooks `src/state/useHandset.ts`, `useSessionTimer.ts`, `useReducedMotion.ts` and `useAutoplay.ts`
   - `useHandset` runs the dial flow (`parseUssd`, text is the extension or `ussdOpenText`, request with `channel: 'ussd'` and one `sessionId` per session) and the SMS flow through the active `HandsetTransport`, and switches to scripted mode on request after an `offline` error
   - `useSessionTimer` arms `limits.ussd.sessionTimeoutMs` (from the server config or fixture) on each input and ends the session with the redial hint
   - `useReducedMotion` reads `matchMedia` and subscribes to `change`. `useAutoplay` types fixture inputs at a user-set speed, or applies each step at once under reduced motion

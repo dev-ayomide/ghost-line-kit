@@ -1,0 +1,361 @@
+{
+  "version": 1,
+  "id": "blackout-line-demo",
+  "title": "Blackout Line: alert and I'm OK check-in",
+  "appId": "blackout-line",
+  "limits": {
+    "sms": {
+      "gsm7": {
+        "singleSegment": 160,
+        "concatSegment": 153
+      },
+      "ucs2": {
+        "singleSegment": 70,
+        "concatSegment": 67
+      }
+    },
+    "ussd": {
+      "screenHardCap": 160,
+      "screenSoftTarget": 140,
+      "sessionTimeoutMs": 180000,
+      "maxOptionsPerScreen": 5
+    },
+    "reply": {
+      "maxPreferredSegments": 3,
+      "nextStepMaxLength": 40,
+      "errorMaxLength": 160
+    },
+    "rateLimit": {
+      "windowMs": 60000,
+      "maxInbound": 10,
+      "maxOutbound": 10
+    }
+  },
+  "steps": [
+    {
+      "when": {
+        "kind": "ussd",
+        "input": "*385#"
+      },
+      "delayMs": 300,
+      "replies": [
+        {
+          "text": "Blackout Line\n1 Alerts\n2 Shelters\n3 I'm OK\n0 Back\n00 Menu"
+        }
+      ],
+      "trace": [
+        {
+          "type": "reasoning",
+          "at": 1000,
+          "title": "USSD code dialled",
+          "summary": "Sender +234******5678 opened a new menu session."
+        },
+        {
+          "type": "tool_call",
+          "at": 1040,
+          "title": "Load main menu",
+          "tool": "show_menu",
+          "summary": "menu=main"
+        },
+        {
+          "type": "tool_result",
+          "at": 1060,
+          "title": "Menu ready",
+          "tool": "show_menu",
+          "ok": true,
+          "durationMs": 20,
+          "summary": "3 options, 50 characters."
+        }
+      ]
+    },
+    {
+      "when": {
+        "kind": "ussd",
+        "input": "1"
+      },
+      "delayMs": 700,
+      "replies": [
+        {
+          "text": "Go to higher ground now. Flood warning for your area. Source: US National Weather Service. Follow official instructions.\n0 Back"
+        }
+      ],
+      "trace": [
+        {
+          "type": "reasoning",
+          "at": 2000,
+          "title": "Menu choice 1: alerts",
+          "summary": "Sender +234******5678 chose Alerts."
+        },
+        {
+          "type": "tool_call",
+          "at": 2040,
+          "title": "Fetch official alerts",
+          "tool": "get_alerts",
+          "summary": "source=US National Weather Service; area=sender region"
+        },
+        {
+          "type": "tool_result",
+          "at": 2690,
+          "title": "Alert found",
+          "tool": "get_alerts",
+          "ok": true,
+          "durationMs": 650,
+          "summary": "1 active flood warning. The action comes first, then the source."
+        }
+      ]
+    },
+    {
+      "when": {
+        "kind": "ussd",
+        "input": "2"
+      },
+      "delayMs": 600,
+      "replies": [
+        {
+          "text": "Nearest shelter: Central High School, 12 Main St. Open now. Source: city emergency office.\n0 Back\n00 Menu"
+        }
+      ],
+      "trace": [
+        {
+          "type": "reasoning",
+          "at": 3000,
+          "title": "Menu choice 2: shelters",
+          "summary": "Sender +234******5678 chose Shelters."
+        },
+        {
+          "type": "tool_call",
+          "at": 3040,
+          "title": "Find nearest shelter",
+          "tool": "find_shelter",
+          "summary": "area=sender region"
+        },
+        {
+          "type": "tool_result",
+          "at": 3590,
+          "title": "Shelter found",
+          "tool": "find_shelter",
+          "ok": true,
+          "durationMs": 550,
+          "summary": "1 shelter, open now."
+        }
+      ]
+    },
+    {
+      "when": {
+        "kind": "ussd",
+        "input": "3"
+      },
+      "delayMs": 800,
+      "replies": [
+        {
+          "text": "Sent. 2 family contacts know you are OK. Follow official instructions. Stay safe.",
+          "endSession": true
+        }
+      ],
+      "trace": [
+        {
+          "type": "reasoning",
+          "at": 5000,
+          "title": "Menu choice 3: I'm OK",
+          "summary": "Sender +234******5678 confirmed the I'm OK message."
+        },
+        {
+          "type": "tool_call",
+          "at": 5040,
+          "title": "Send I'm OK to family",
+          "tool": "send_checkin",
+          "summary": "recipients=2; sender=+234******5678"
+        },
+        {
+          "type": "tool_result",
+          "at": 5820,
+          "title": "Check-in sent",
+          "tool": "send_checkin",
+          "ok": true,
+          "durationMs": 780,
+          "summary": "2 of 2 messages queued."
+        }
+      ]
+    },
+    {
+      "when": {
+        "kind": "ussd",
+        "input": "0"
+      },
+      "delayMs": 250,
+      "replies": [
+        {
+          "text": "Blackout Line\n1 Alerts\n2 Shelters\n3 I'm OK\n0 Back\n00 Menu"
+        }
+      ],
+      "trace": [
+        {
+          "type": "reasoning",
+          "at": 6000,
+          "title": "Back to main menu",
+          "summary": "Sender +234******5678 went back one screen."
+        },
+        {
+          "type": "tool_call",
+          "at": 6030,
+          "title": "Load main menu",
+          "tool": "show_menu",
+          "summary": "menu=main"
+        },
+        {
+          "type": "tool_result",
+          "at": 6050,
+          "title": "Menu ready",
+          "tool": "show_menu",
+          "ok": true,
+          "durationMs": 20,
+          "summary": "3 options, 50 characters."
+        }
+      ]
+    },
+    {
+      "when": {
+        "kind": "ussd",
+        "input": "00"
+      },
+      "delayMs": 250,
+      "replies": [
+        {
+          "text": "Blackout Line\n1 Alerts\n2 Shelters\n3 I'm OK\n0 Back\n00 Menu"
+        }
+      ],
+      "trace": [
+        {
+          "type": "reasoning",
+          "at": 7000,
+          "title": "Back to main menu",
+          "summary": "Sender +234******5678 asked for the main menu."
+        },
+        {
+          "type": "tool_call",
+          "at": 7030,
+          "title": "Load main menu",
+          "tool": "show_menu",
+          "summary": "menu=main"
+        },
+        {
+          "type": "tool_result",
+          "at": 7050,
+          "title": "Menu ready",
+          "tool": "show_menu",
+          "ok": true,
+          "durationMs": 20,
+          "summary": "3 options, 50 characters."
+        }
+      ]
+    },
+    {
+      "when": {
+        "kind": "sms",
+        "input": "alerts"
+      },
+      "delayMs": 800,
+      "replies": [
+        {
+          "text": "Go to higher ground now. Flood warning for your area. Source: US National Weather Service. Follow official instructions. Reply SHELTER for the nearest one."
+        }
+      ],
+      "trace": [
+        {
+          "type": "reasoning",
+          "at": 8000,
+          "title": "Asked for alerts",
+          "summary": "Message from +234******5678 matches the alerts request."
+        },
+        {
+          "type": "tool_call",
+          "at": 8040,
+          "title": "Fetch official alerts",
+          "tool": "get_alerts",
+          "summary": "source=US National Weather Service; area=sender region"
+        },
+        {
+          "type": "tool_result",
+          "at": 8840,
+          "title": "Alert found",
+          "tool": "get_alerts",
+          "ok": true,
+          "durationMs": 800,
+          "summary": "1 active flood warning. The action comes first, then the source."
+        }
+      ]
+    },
+    {
+      "when": {
+        "kind": "sms",
+        "input": "shelter"
+      },
+      "delayMs": 600,
+      "replies": [
+        {
+          "text": "Nearest shelter: Central High School, 12 Main St. Open now. Source: city emergency office. Reply OK to tell your family you are safe."
+        }
+      ],
+      "trace": [
+        {
+          "type": "reasoning",
+          "at": 9000,
+          "title": "Asked for a shelter",
+          "summary": "Sender +234******5678 sent SHELTER."
+        },
+        {
+          "type": "tool_call",
+          "at": 9040,
+          "title": "Find nearest shelter",
+          "tool": "find_shelter",
+          "summary": "area=sender region"
+        },
+        {
+          "type": "tool_result",
+          "at": 9590,
+          "title": "Shelter found",
+          "tool": "find_shelter",
+          "ok": true,
+          "durationMs": 550,
+          "summary": "1 shelter, open now."
+        }
+      ]
+    },
+    {
+      "when": {
+        "kind": "sms",
+        "input": "ok"
+      },
+      "delayMs": 900,
+      "replies": [
+        {
+          "text": "Your I'm OK message went to 2 family contacts. Follow official instructions. Send ALERTS for updates."
+        }
+      ],
+      "trace": [
+        {
+          "type": "reasoning",
+          "at": 10000,
+          "title": "I'm OK check-in",
+          "summary": "Sender +234******5678 sent OK."
+        },
+        {
+          "type": "tool_call",
+          "at": 10040,
+          "title": "Send I'm OK to family",
+          "tool": "send_checkin",
+          "summary": "recipients=2; sender=+234******5678"
+        },
+        {
+          "type": "tool_result",
+          "at": 10900,
+          "title": "Check-in sent",
+          "tool": "send_checkin",
+          "ok": true,
+          "durationMs": 860,
+          "summary": "2 of 2 messages queued."
+        }
+      ]
+    }
+  ]
+}

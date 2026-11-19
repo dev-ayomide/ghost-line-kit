@@ -65,3 +65,8 @@ Every action Claude Code takes: date, what, why, files.
 - Kiro found that the kit's `detectEncoding` treats the GSM extension characters (`^ { } \ [ ~ ] |` and the euro sign) as UCS-2, so the planned `charCost` of 2 would under-count segments. Kiro recommended making `isComposable` reject those characters so Compose can never produce them and `charCost` is always 1. Claude Code relayed approval (a design decision made on the owner's standing instruction to proceed; no kit change). Kiro also confirmed the repo URL and listed small deviations (extra `letter` field on multi-tap pending state, workspace link for `@ghostline/kit`).
 - Told Kiro to run 8.1 to 11.2 (server handler and wiring, Node wrapper and Vite plugin, transports, fixtures, state layer), skipping optional tasks, and stop after 11.2.
 - Files: `docs/claude-code-log.md`.
+
+## 2026-11-19: Verified Phantom Handset tasks 10.1, 10.2, 11.1, 11.2 (partial run), built by Kiro
+- Ran `pnpm test` with `FC_NUM_RUNS=1000`: 40 files, 266 pass; typecheck clean. Browser `src/` still has no runtime kit import, `node:`, storage or console use.
+- Gap found: tasks 8.1 (server handler/wiring) and 9.1 (Node wrapper, Vite plugin) are unchecked and `phantom-handset/server/` does not exist, although Kiro's report covered transports, fixtures and state. Asked Kiro to run 8.1 and 9.1 next. The live path and the SSR risk check are therefore still untested.
+- Files by Kiro: `phantom-handset/src/{fixtures,state,trace,transport}`, `src/sms/counter.ts` (isComposable change), spec docs.

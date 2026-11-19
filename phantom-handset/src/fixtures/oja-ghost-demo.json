@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "id": "oja-ghost-demo",
+  "title": "Oja Ghost: prices and debt book",
+  "appId": "oja-ghost",
+  "limits": {
+    "sms": {
+      "gsm7": { "singleSegment": 160, "concatSegment": 153 },
+      "ucs2": { "singleSegment": 70, "concatSegment": 67 }
+    },
+    "ussd": {
+      "screenHardCap": 160,
+      "screenSoftTarget": 140,
+      "sessionTimeoutMs": 180000,
+      "maxOptionsPerScreen": 5
+    },
+    "reply": { "maxPreferredSegments": 3, "nextStepMaxLength": 40, "errorMaxLength": 160 },
+    "rateLimit": { "windowMs": 60000, "maxInbound": 10, "maxOutbound": 10 }
+  },
+  "steps": [
+    {
+      "when": { "kind": "ussd", "input": "*384#" },
+      "delayMs": 300,
+      "replies": [{ "text": "Oja Ghost\n1 Prices\n2 Debt book\n3 Exit\n0 Back\n00 Menu" }],
+      "trace": [
+        { "type": "reasoning", "at": 1000, "title": "USSD code dialled", "summary": "Sender +234******5678 opened a new menu session." },
+        { "type": "tool_call", "at": 1040, "title": "Load main menu", "tool": "show_menu", "summary": "menu=main" },
+        { "type": "tool_result", "at": 1060, "title": "Menu ready", "tool": "show_menu", "ok": true, "durationMs": 20, "summary": "3 options, 49 characters." }
+      ]
+    },
+    {
+      "when": { "kind": "ussd", "input": "1" },
+      "delayMs": 450,
+      "replies": [{ "text": "Prices today\nTomato basket: ₦45,000\nRice 50kg: ₦78,000\nBeans bag: ₦92,000\n0 Back\n00 Menu" }],
+      "trace": [
+        { "type": "reasoning", "at": 2000, "title": "Menu choice 1: prices", "summary": "Sender +234******5678 chose Prices from the main menu." },
+        { "type": "tool_call", "at": 2040, "title": "Look up market prices", "tool": "get_prices", "summary": "items=tomato, rice, beans; market=Mile 12" },
+        { "type": "tool_result", "at": 2310, "title": "Prices found", "tool": "get_prices", "ok": true, "durationMs": 270, "summary": "3 prices returned." }
+      ]
+    },
+    {
+      "when": { "kind": "ussd", "input": "2" },
+      "delayMs": 500,
+      "replies": [{ "text": "Debt book\nMama Ife owes ₦1,500\nBaba Tunde owes ₦3,200\nTotal: ₦4,700\n0 Back\n00 Menu" }],
+      "trace": [
+        { "type": "reasoning", "at": 3000, "title": "Menu choice 2: debt book", "summary": "Sender +234******5678 chose Debt book." },
+        { "type": "tool_call", "at": 3040, "title": "Read the debt book", "tool": "list_debts", "summary": "owner=+234******5678" },
+        { "type": "tool_result", "at": 3340, "title": "Debts found", "tool": "list_debts", "ok": true, "durationMs": 300, "summary": "2 open debts, total ₦4,700." }
+      ]
+    },
+    {
+      "when": { "kind": "ussd", "input": "3" },
+      "delayMs": 250,
+      "replies": [{ "text": "Thank you. Dial *384# any time to come back.", "endSession": true }],
+      "trace": [
+        { "type": "reasoning", "at": 4000, "title": "Menu choice 3: exit", "summary": "Sender +234******5678 ended the session." }
+      ]
+    },
+    {
+      "when": { "kind": "ussd", "input": "0" },
+      "delayMs": 250,
+      "replies": [{ "text": "Oja Ghost\n1 Prices\n2 Debt book\n3 Exit\n0 Back\n00 Menu" }],
+      "trace": [
+        { "type": "reasoning", "at": 5000, "title": "Back to main menu", "summary": "Sender +234******5678 went back one screen." },
+        { "type": "tool_call", "at": 5030, "title": "Load main menu", "tool": "show_menu", "summary": "menu=main" },
+        { "type": "tool_result", "at": 5050, "title": "Menu ready", "tool": "show_menu", "ok": true, "durationMs": 20, "summary": "3 options, 49 characters." }
+      ]
+    },
+    {
+      "when": { "kind": "ussd", "input": "00" },
+      "delayMs": 250,
+      "replies": [{ "text": "Oja Ghost\n1 Prices\n2 Debt book\n3 Exit\n0 Back\n00 Menu" }],
+      "trace": [
+        { "type": "reasoning", "at": 6000, "title": "Back to main menu", "summary": "Sender +234******5678 asked for the main menu." },
+        { "type": "tool_call", "at": 6030, "title": "Load main menu", "tool": "show_menu", "summary": "menu=main" },
+        { "type": "tool_result", "at": 6050, "title": "Menu ready", "tool": "show_menu", "ok": true, "durationMs": 20, "summary": "3 options, 49 characters." }
+      ]
+    },
+    {
+      "when": { "kind": "sms", "input": "prices" },
+      "delayMs": 600,
+      "replies": [
+        { "text": "Prices today: Tomato basket ₦45,000. Rice 50kg ₦78,000. Beans bag ₦92,000. Reply MORE" }
+      ],
+      "trace": [
+        { "type": "reasoning", "at": 7000, "title": "Asked for prices", "summary": "Message from +234******5678 matches the prices request." },
+        { "type": "tool_call", "at": 7040, "title": "Look up market prices", "tool": "get_prices", "summary": "items=tomato, rice, beans, yam, garri; market=Mile 12" },
+        { "type": "tool_result", "at": 7390, "title": "Prices found", "tool": "get_prices", "ok": true, "durationMs": 350, "summary": "5 prices returned. The reply shows 3 and offers MORE." }
+      ]
+    },
+    {
+      "when": { "kind": "sms", "input": "more" },
+      "delayMs": 300,
+      "replies": [
+        { "text": "Yam tuber ₦2,500. Garri 1 paint rubber ₦1,800. Reply BOOK to see your debts." }
+      ],
+      "trace": [
+        { "type": "reasoning", "at": 8000, "title": "Asked for the rest", "summary": "Sender +234******5678 sent MORE. 1 part is waiting." },
+        { "type": "tool_result", "at": 8030, "title": "Held part sent", "ok": true, "durationMs": 30, "summary": "Sent the stored part of the last reply." }
+      ]
+    },
+    {
+      "when": { "kind": "sms", "input": "book" },
+      "delayMs": 650,
+      "replies": [
+        { "text": "Debt book: Mama Ife owes ₦1,500. Baba Tunde owes ₦3,200. Total ₦4,700. Reply HELP for options." }
+      ],
+      "trace": [
+        { "type": "reasoning", "at": 9000, "title": "Asked for the debt book", "summary": "Message from +234******5678 matches the book request." },
+        { "type": "tool_call", "at": 9040, "title": "Read the debt book", "tool": "list_debts", "summary": "owner=+234******5678" },
+        { "type": "tool_result", "at": 9420, "title": "Debts found", "tool": "list_debts", "ok": true, "durationMs": 380, "summary": "2 open debts, total ₦4,700." }
+      ]
+    },
+    {
+      "when": { "kind": "sms", "input": "help" },
+      "delayMs": 200,
+      "replies": [
+        { "text": "Send PRICES for market prices. Send BOOK for your debts. Send STOP to unsubscribe. Reply PRICES to start." }
+      ],
+      "trace": [
+        { "type": "reasoning", "at": 10000, "title": "Asked for help", "summary": "Sender +234******5678 sent HELP. Showing the command list." }
+      ]
+    }
+  ]
+}
