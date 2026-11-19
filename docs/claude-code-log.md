@@ -129,3 +129,7 @@ Every action Claude Code takes: date, what, why, files.
 - Kiro wrote `.kiro/specs/oja-ghost/tasks.md` (16 groups): kit amendments (`isSubscribed`, optional `nextStep`) with required tests first; app scaffold and copy; pure modules with required PBTs P1-P9; tools, flows, dispatcher, seed, `eraseUserData`, `createOjaGhost`; phantom-handset `llm`/`nextStep` hook and the stand-in swap; optional model fallback and example tests; final checkpoint.
 - Approved with two changes: (1) task 14.2 (swap, Open Question 6) approved now; (2) remove the `docs/kiro-log.md` lines from 16.1, because that log only takes entries the owner dictates (CLAUDE.md rule). Open: Pidgin review, reminder trigger in demo.
 - Files: `.kiro/specs/oja-ghost/tasks.md` (Kiro), `docs/claude-code-log.md`.
+
+## 2026-11-22: Started Kiro on Oja Ghost tasks 1.1 to 5.2
+- What: Approved tasks.md with two edits (14.2 swap approved; remove `docs/kiro-log.md` lines from 16.1). Asked Kiro to run 1.1 to 5.2 (kit amendments `isSubscribed` and `nextStep`, scaffold, config, money, ledger, prices with required PBTs), optional tasks skipped, then stop and report. Kiro writes the code.
+- Files: `docs/claude-code-log.md`.
