@@ -12,7 +12,7 @@ One kit change comes first: `isSubscribed` (Requirement 13). One small change in
 |---|---|---|---|
 | D1 | Add an optional field `llm?: LlmProvider` to `HandsetApp`, and one line in `wire.ts`: `app.llm ?? llm`. Part of the stand-in swap (Open Question 6). | The stand-in `KeywordLlmProvider` maps a digit to the n-th intent. That breaks USSD flows, where `2` means "Beans" in one step and "Report price" in another. Oja Ghost needs its own classifier. | The app still works on SMS with command-first messages (`price rice mile12`), but USSD sub-menus and name-first messages (`Bola owes 4500`) fail on the handset. |
 | D2 | v1 never calls a model. Classification is rule-based and money, names and dates are parsed by code. | Money must not depend on a model's reading. A rule classifier costs nothing per SMS and behaves the same every time. Bedrock stays available through the kit for a later free-text fallback. | Add a fallback in `provider.ts`: call the base provider only for text no rule matches and no flow is waiting for. |
-| D3 | Accept that the kit's default next step ("Reply HELP for options") is added to every SMS reply, in English, even for Pidgin Traders. | `MessageProcessorConfig` has no `nextStep` option, so the app cannot change it. | Add an optional `nextStep` to the kit processor (general, small). Needs your approval as a second kit amendment. |
+| D3 | **Approved.** Add an optional `nextStep: string` to the kit's `MessageProcessorConfig`, with a test. It is one static string per processor, so it cannot follow a Trader's language. Oja Ghost uses a short bilingual text (40 characters or fewer). | The kit's default ("Reply HELP for options") is English and `MessageProcessorConfig` had no option to change it. | Keep the English default. |
 
 ## Architecture
 
@@ -75,6 +75,7 @@ export interface OjaGhostApp {
   buildToolCall: NonNullable<MessageProcessorConfig['buildToolCall']>;
   eraseUserData: (phoneNumber: string) => Promise<void>;
   llm: LlmProvider;                                               // D1: OjaRuleProvider
+  nextStep: string;                                               // D3: bilingual, 40 characters or fewer
 }
 
 export interface OjaGhostDeps {

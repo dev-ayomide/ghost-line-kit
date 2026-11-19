@@ -124,3 +124,8 @@ Every action Claude Code takes: date, what, why, files.
 - Reviewed: matches the approved requirements and decisions (plain N, zod, isSubscribed). Public API only; reminders go to the trader only; DELETE sweep via reporter index; no new dependency beyond approved zod.
 - Kiro raised three decisions. Claude Code's recommendations: D1 approve (optional `llm` field on `HandsetApp`, one line in phantom-handset wire.ts, so Oja Ghost's own classifier handles USSD sub-menus); D2 keep v1 rule-based for money safety, with a model fallback for unmatched free text as an OPTIONAL task, so the "AI agent" claim is honest; D3 approve optional `nextStep` on the kit processor so Pidgin replies get a Pidgin next step (small kit amendment, with test).
 - Files: `.kiro/specs/oja-ghost/{requirements,design}.md` (Kiro), `docs/claude-code-log.md`.
+
+## 2026-11-19: Oja Ghost tasks.md written by Kiro; reviewed by Claude Code
+- Kiro wrote `.kiro/specs/oja-ghost/tasks.md` (16 groups): kit amendments (`isSubscribed`, optional `nextStep`) with required tests first; app scaffold and copy; pure modules with required PBTs P1-P9; tools, flows, dispatcher, seed, `eraseUserData`, `createOjaGhost`; phantom-handset `llm`/`nextStep` hook and the stand-in swap; optional model fallback and example tests; final checkpoint.
+- Approved with two changes: (1) task 14.2 (swap, Open Question 6) approved now; (2) remove the `docs/kiro-log.md` lines from 16.1, because that log only takes entries the owner dictates (CLAUDE.md rule). Open: Pidgin review, reminder trigger in demo.
+- Files: `.kiro/specs/oja-ghost/tasks.md` (Kiro), `docs/claude-code-log.md`.
