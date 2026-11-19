@@ -25,6 +25,7 @@ inclusion: always
 - Keep dependencies few. Ask before adding one.
 - Approved AWS SDK v3 packages (2026-11-14): `@aws-sdk/client-bedrock-runtime` (BedrockProvider), `@aws-sdk/client-dynamodb` and `@aws-sdk/lib-dynamodb` (DynamoStore). Import them only inside those implementation files.
 - Approved dev dependency (2026-11-18): `@types/node` for `kit` (types for `crypto`, `process.env`, `fetch`). Type-only.
+- Approved dev dependency (2026-11-19): `@types/node` for `phantom-handset` (server types only). Type-only.
 
 ## Testing
 - `pnpm test` runs everything. `pnpm test:pbt` runs only the property tests, with more runs.

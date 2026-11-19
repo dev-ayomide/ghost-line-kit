@@ -31,3 +31,8 @@ Every action Claude Code takes: date, what, why, files.
 - Review result: browser imports kit types only (`import type`); server is a pure handler plus node:http wrapper; no new runtime dependency; PBT properties P1-P4 (paginator) and C1-C3 (composer) are required; optional tests are marked.
 - Six open questions raised by Kiro, awaiting owner decisions: (1) kit-core `onTrace` amendment for live trace events, (2) kit-core amendment for `channel: 'ussd'` over the web adapter, (3) `@types/node` dev dependency for phantom-handset, (4) HandsetApp contract for apps, (5) what text a USSD dial sends, (6) small deviations from requirements (masked number format, key map exceptions, whitespace wording).
 - Files: `.kiro/specs/phantom-handset/design.md`, `docs/claude-code-log.md`.
+
+## 2026-11-19: Owner decisions on Phantom Handset design; Kiro asked for tasks.md
+- Owner (user) approved: `@types/node` dev dependency for phantom-handset (recorded in `.kiro/steering/tech.md`); both kit-core amendments (onTrace trace callback, optional `channel` on the web payload). Claude Code relayed these to Kiro along with confirmations of open questions 4, 5 and 6 (HandsetApp shape, ussdOpenText default MENU, three small deviations), and asked Kiro for a lean tasks.md (about 15 tasks, kit amendments first, PBTs required).
+- Incident: while typing the reply, Siri took keyboard focus and about 590 characters landed in the open kit-core requirements.md editor tab instead of Kiro's chat. It was never saved (git showed no change to that file); I undid it with Cmd+Z, confirmed the text was gone, and git status shows only the tech.md edit. Retyped into Kiro's chat.
+- Files: `.kiro/steering/tech.md`, `docs/claude-code-log.md`.
