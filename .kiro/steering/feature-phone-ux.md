@@ -11,7 +11,7 @@ fileMatchPattern: ["kit/src/format/**", "kit/src/session/**", "apps/**", "phanto
 - Prefer at most 3 SMS segments per reply. If more are needed, send a summary and offer "Reply MORE".
 
 ## Writing style
-- Plain words, short sentences. Use numbers and currency the way traders write them: "₦1,500", never "1500.00 NGN".
+- Plain words, short sentences. Use numbers and currency the way traders write them: "N1,500", never "1500.00 NGN". Replies use the plain letter N, not the naira sign "₦" (updated 2026-11-19): "₦" is not in GSM-7, so it would force UCS-2 and cut an SMS to 70 characters. The handset web page may show "₦" in its own chrome, never inside a reply.
 - Never split a number, an amount, a phone number or a word across segments or screens.
 - USSD menus: at most 5 options, numbered 1–5, plus "0 Back" and "00 Menu".
 - Every reply ends with a next step when useful ("Reply 1 to confirm").

@@ -27,6 +27,8 @@ inclusion: always
 - Approved dev dependency (2026-11-18): `@types/node` for `kit` (types for `crypto`, `process.env`, `fetch`). Type-only.
 - Approved dev dependency (2026-11-19): `@types/node` for `phantom-handset` (server types only). Type-only.
 - Approved dependency (2026-11-19): `zod` (same range as `kit`) for `phantom-handset`, used only in `phantom-handset/server/stand-in.ts`. Never imported from `phantom-handset/src`.
+- Approved dependency (2026-11-19): `zod` (same range as `kit`) for `apps/oja-ghost`, used for tool input schemas only.
+- Approved kit-core amendment (2026-11-19): export `isSubscribed(store, phoneNumber)` from the kit public API so apps can respect STOP.
 
 ## Testing
 - `pnpm test` runs everything. `pnpm test:pbt` runs only the property tests, with more runs.

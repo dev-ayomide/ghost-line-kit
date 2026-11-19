@@ -111,3 +111,10 @@ Every action Claude Code takes: date, what, why, files.
 ## 2026-11-19: Started Kiro on Spec 3 (oja-ghost) requirements
 - What: Opened a new Kiro chat ("Build OjaGhost spec") and sent the Spec 3 brief from `docs/KICKOFF.md` (price check, price reports with outlier rejection, debt book, reminders, English and Pidgin, the three property tests, demo-labelled seed data), asking for requirements.md only, built on the kit's public API and matching the HandsetApp shape the Phantom Handset server expects. Kiro writes the spec; Claude Code reviews.
 - Files: `docs/claude-code-log.md`.
+
+## 2026-11-19: Oja Ghost requirements written by Kiro; reviewed by Claude Code; owner decisions
+- Kiro wrote `.kiro/specs/oja-ghost/requirements.md` (253 lines, 12 requirements, required PBTs for ledger balance, no-negative balance, outlier rejection, rejected paid, amount parser, undo, reminder due-check, dispatcher idempotence). Reviewed: matches the brief, public API only, reminders go to the trader only, DELETE/STOP covered, demo data labelled.
+- Owner decisions: (1) zod approved for apps/oja-ghost; (2) kit-core amendment approved: export `isSubscribed(store, phone)`; (3) use plain `N` instead of the naira sign in replies (GSM-7, 160 chars per SMS). Recorded in `tech.md`; `feature-phone-ux.md` updated with the reason (a steering change made by Claude Code on the owner's decision).
+- Issue to fix: the intro claims the app should need "fewer than about 300 lines". This is unprovable given the requirements' scope and conflicts with our honesty rule. Asking Kiro to remove it.
+- Remaining open: Pidgin native-speaker review (owner), reminder trigger in the demo (later task).
+- Files: `.kiro/steering/{tech,feature-phone-ux}.md`, `docs/claude-code-log.md`, `.kiro/specs/oja-ghost/requirements.md` (Kiro).
