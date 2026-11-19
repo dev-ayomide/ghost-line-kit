@@ -51,3 +51,7 @@ Every action Claude Code takes: date, what, why, files.
 - Ran `pnpm test` with `FC_NUM_RUNS=1000`: 38 files, 250 tests pass (up from 232). `pnpm typecheck` clean across all packages.
 - Reviewed the diff: `onTrace` is inert without a sink, called in try/catch, summaries redacted (exact and digits-only sender number, 200 char cap), titles cut at 80; web `channel` accepts only 'web' | 'ussd'. No Date.now or AWS SDK use added. Kit-core design.md has the amendment note.
 - Files by Kiro: `kit/src/trace.ts`, `kit/src/processor.ts`, `kit/src/channels/web-adapter.ts`, `kit/src/index.ts`, `kit/test/trace.test.ts`, `kit/test/trace.pbt.test.ts`, `kit/test/web-adapter-channel.test.ts`, spec docs. Claude Code wrote none of it.
+
+## 2026-11-19: Started Kiro on Phantom Handset tasks 3.1 to 7.2
+- What: Told Kiro to run tasks 3.1 to 7.2 (project setup, Handset_Config, paginator, keypad composer, multi-tap, SMS counter; optional starred tasks skipped) and stop after 7.2. Kiro writes the code; Claude Code verifies afterwards.
+- Files: `docs/claude-code-log.md`.
