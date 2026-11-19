@@ -79,3 +79,9 @@ Every action Claude Code takes: date, what, why, files.
 - Kiro asked before adding a dependency: the stand-in apps' tools need zod schemas (kit `Tool.inputSchema`). zod is already a kit dependency but was not listed in tech.md. Owner approved adding zod to phantom-handset (kit's version range, server/stand-in.ts only, never in `src/`). Recorded in `.kiro/steering/tech.md`. Rejected alternatives: a kit schema helper, casting plain objects.
 - Relayed the approval to Kiro and told it to run 8.1 and 9.1.
 - Files: `.kiro/steering/tech.md`, `docs/claude-code-log.md`.
+
+## 2026-11-19: Verified Phantom Handset server tasks 8.1 and 9.1, built by Kiro
+- Ran `pnpm test` (`FC_NUM_RUNS=1000`): 40 files, 266 pass; typecheck clean in all packages.
+- Live checks by Claude Code: started `vite` dev server; `/api/health`, `/api/config` (kit limits), POST `/api/web/oja-ghost` with `channel: 'ussd'` returned the menu plus a live trace (reasoning, tool_call, tool_result) with the phone number masked; a `from` outside the fake range gave `INVALID_FROM`; unknown app gave `UNKNOWN_APP`. Built and ran the standalone server (`pnpm run serve`): health and a blackout-line POST worked. Starting with `HOST=0.0.0.0` and no token is refused. So the SSR-bundling risk resolved (kit TypeScript bundled with the AWS SDK; Kiro noted why in `vite.config.ts`).
+- Note: live mode currently runs stand-in apps until the Oja Ghost and Blackout Line specs land.
+- Files by Kiro: `phantom-handset/server/*`, `vite.config.ts`, `tsconfig.server.json`, `.env.example`. Claude Code wrote none of it.

@@ -125,7 +125,7 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 8. Server: handler and wiring
 
-- [ ] 8.1 Implement `server/handler.ts`, `server/wire.ts`, `server/apps.ts` and `server/stand-in.ts`
+- [x] 8.1 Implement `server/handler.ts`, `server/wire.ts`, `server/apps.ts` and `server/stand-in.ts`
   - `createHandler(deps)` returns `(HandlerRequest) => Promise<HandlerResponse>` with no Node-only objects. Routes: `GET /api/health`, `GET /api/config` (`LIMITS`, apps, `trace` flag), `POST /api/web/:appId`
   - POST steps as in the design: 404 for an unknown app; token check for non-loopback use with the kit's `verifyWebhookSecret`; a **new `WebAdapter` per request** (`parseWebhook`, then `onDeliver` and `send` to collect replies); reject any `from` not matching `^\+2340\d{9}$`; set a `messageId` with `randomUUID`; collect trace events by `messageId` and strip `messageId` before responding; short user messages for 400/401/404/500 with no stack traces or internal IDs; optional CORS for `HANDSET_ALLOWED_ORIGIN`
   - `wire.ts` builds `MemoryStore` or `DynamoStore`, `SystemClock`, `createLogger`, `SessionStateMachine`, `RateLimiter`, and per app a `ToolRegistry`, `Agent` and `MessageProcessor` (passing `onTrace` unless `HANDSET_TRACE=off`). The model is `BedrockProvider` or `KeywordLlmProvider`. Import only names exported from `@ghostline/kit`
@@ -139,7 +139,7 @@ All tests are from the approved design. Property-based tests (PBT) are **require
 
 ### 9. Server: Node wrapper and Vite plugin
 
-- [ ] 9.1 Implement `server/node-listener.ts`, `server/main.ts` and the Vite dev plugin
+- [x] 9.1 Implement `server/node-listener.ts`, `server/main.ts` and the Vite dev plugin
   - `node-listener.ts`: `(IncomingMessage, ServerResponse)` to `HandlerRequest` (body cap 8 KiB, JSON parse failure gives `body: undefined`) and back to the response. Plain `node:http` only
   - `main.ts`: `http.createServer(listener).listen(PORT, HOST)`; refuse to start when `HOST` is not loopback and `HANDSET_ACCESS_TOKEN` is unset
   - `vite.config.ts`: a plugin that mounts the listener at `/api` through `server.ssrLoadModule('/server/wire.ts')` and builds the env with `loadEnv(mode, repoRoot, '')`. Confirm no `HANDSET_*` variable reaches the browser bundle
