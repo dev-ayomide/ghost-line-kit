@@ -29,6 +29,9 @@
  * - Outbound limiting is applied to every outbound message, including
  *   acknowledgements. Once a send is refused, that message and the rest are
  *   dropped. Error replies from the catch-all are never dropped.
+ * - Next step: an optional static `nextStep` (validated in the constructor) replaces
+ *   the default "Reply HELP for options" on replies that continue the conversation.
+ *   The user record shape and key live in `subscription.ts` (`isSubscribed`).
  * - Logging: message id, message length, event/error code and the raw phone
  *   number (the logger masks it). Message bodies are never logged.
  */
@@ -45,6 +48,7 @@ import type { RateLimiter } from './rate-limiter.js';
 import type { Clock } from './session/clock.js';
 import type { SessionStateMachine } from './session/session-state-machine.js';
 import type { Store } from './store/store.js';
+import { userKey, type UserRecord } from './subscription.js';
 import type { TraceEvent, TraceSink } from './trace.js';
 
 export interface ProcessorCopy {
@@ -91,6 +95,12 @@ export interface MessageProcessorConfig {
   eraseUserData?: (phoneNumber: string) => Promise<void>;
   /** Optional observer for trace events. Never receives raw message text. Never affects the result. */
   onTrace?: TraceSink;
+  /**
+   * Optional next-step text for replies that continue the conversation. One static
+   * string per processor. Non-empty, GSM-7, at most LIMITS.reply.nextStepMaxLength.
+   * When unset, the kit default (DEFAULT_NEXT_STEP) is used.
+   */
+  nextStep?: string;
 }
 
 const TRACE_TITLE_MAX = 80;
@@ -116,10 +126,6 @@ function redactSummary(value: unknown, senderPhone: string): string {
   return out.slice(0, TRACE_SUMMARY_MAX);
 }
 
-interface UserRecord {
-  subscribed: boolean;
-}
-
 interface PendingRecord {
   text: string;
 }
@@ -127,7 +133,6 @@ interface PendingRecord {
 const ALL_CHANNELS: readonly ChannelType[] = ['sms', 'ussd', 'web'];
 const MORE_SUFFIX_RE = /\s*Reply MORE$/;
 
-const userKey = (phone: string): string => `user:${phone}`;
 const pendingKey = (phone: string): string => `pending:${phone}`;
 
 function resolveCopy(overrides: Partial<ProcessorCopy> | undefined): ProcessorCopy {
@@ -147,6 +152,20 @@ function resolveCopy(overrides: Partial<ProcessorCopy> | undefined): ProcessorCo
     copy[key] = value;
   }
   return copy;
+}
+
+function validateNextStep(value: string | undefined): string | undefined {
+  if (value === undefined) return undefined;
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new Error('Invalid processor nextStep: must be a non-empty string');
+  }
+  if (value.length > LIMITS.reply.nextStepMaxLength) {
+    throw new Error('Invalid processor nextStep: too long');
+  }
+  if (detectEncoding(value) !== 'GSM-7') {
+    throw new Error('Invalid processor nextStep: must be GSM-7');
+  }
+  return value;
 }
 
 function defaultBuildToolCall(intent: Intent, ctx: ToolContext): ToolCall {
@@ -172,8 +191,10 @@ export class MessageProcessor {
   private readonly eraseUserData?: (phoneNumber: string) => Promise<void>;
   private readonly clock: Clock;
   private readonly onTrace?: TraceSink;
+  private readonly nextStep?: string;
 
   constructor(config: MessageProcessorConfig) {
+    this.nextStep = validateNextStep(config.nextStep);
     this.clock = config.clock;
     this.onTrace = config.onTrace;
     this.store = config.store;
@@ -373,7 +394,12 @@ export class MessageProcessor {
   /** Formats text for the inbound channel. Pure apart from computing the MORE remainder. */
   private render(text: string, inbound: InboundMessage, continueConversation: boolean): Rendered {
     const { from: phone, channel } = inbound;
-    const reply = formatReply(text, { channel, continueConversation });
+    const reply = formatReply(
+      text,
+      this.nextStep === undefined
+        ? { channel, continueConversation }
+        : { channel, continueConversation, nextStep: this.nextStep },
+    );
     if (channel === 'ussd') {
       const first = reply.segments[0] ?? '';
       return {

@@ -133,3 +133,9 @@ Every action Claude Code takes: date, what, why, files.
 ## 2026-11-22: Started Kiro on Oja Ghost tasks 1.1 to 5.2
 - What: Approved tasks.md with two edits (14.2 swap approved; remove `docs/kiro-log.md` lines from 16.1). Asked Kiro to run 1.1 to 5.2 (kit amendments `isSubscribed` and `nextStep`, scaffold, config, money, ledger, prices with required PBTs), optional tasks skipped, then stop and report. Kiro writes the code.
 - Files: `docs/claude-code-log.md`.
+
+## 2026-11-20: Verified Oja Ghost tasks 1.1 to 5.2, built by Kiro
+- `pnpm test` (`FC_NUM_RUNS=1000`): 46 files, 500 tests pass (up from 267); typecheck clean in all packages.
+- Kit: new `isSubscribed` export (only a one-line addition to the encapsulation test list) and optional `nextStep`, with required tests. Existing kit tests unchanged.
+- App: scaffold, config, copy, money, names, ledger, prices written; PBTs P1, P2, P4, P5, P6, P9 and P3 pass. Reviewed `ledger.ts`: pure, no mutation, `paid` above balance rejected, `overpaid` the only path to a negative balance, undo restores `nextN`. App imports only `@ghostline/kit` (detectEncoding) and relative files; no `Date.now` or `Math.random`.
+- Files by Kiro: `kit/src/{subscription.ts,processor.ts,index.ts}`, kit tests, `apps/oja-ghost/src/*`, `apps/oja-ghost/test/*`, `pnpm-lock.yaml`, spec files. Claude Code wrote none of it.

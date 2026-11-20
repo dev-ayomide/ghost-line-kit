@@ -18,60 +18,60 @@ Run each test file with `pnpm vitest run <path>`. Property tests are named `*.pb
 
 ### 1. Kit amendments: `isSubscribed` and `nextStep`
 
-- [ ] 1.1 Export `isSubscribed` from the kit
+- [x] 1.1 Export `isSubscribed` from the kit
   - Create `kit/src/subscription.ts` with `UserRecord`, `userKey(phone)` and `isSubscribed(store, phoneNumber)` exactly as in design.md "Kit amendment"
   - In `kit/src/processor.ts`, remove the private `userKey` and `UserRecord` and import them from `./subscription.js`. Change no other behaviour
   - Add `export { isSubscribed } from './subscription.js';` to `kit/src/index.ts`. Do not export `userKey`
   - _Requirements: oja-ghost 13.1, 13.2, 13.3, 13.4, 13.6_
 
-- [ ] 1.2 Write the required test in `kit/test/subscription.test.ts`
+- [x] 1.2 Write the required test in `kit/test/subscription.test.ts`
   - Drive `MessageProcessor` with `kit/test/processor-helpers.ts` through this sequence and assert `isSubscribed` after each step: before any message `false`; after an ordinary message `true`; after STOP `false`; after START `true`; after DELETE `false`
   - A store whose `read` rejects makes `isSubscribed` reject with the same error. `isSubscribed` never writes (spy on `store.write`)
   - _Requirements: oja-ghost 13.2, 13.3, 13.5_
 
-- [ ] 1.3 Add an optional `nextStep` to `MessageProcessorConfig`
+- [x] 1.3 Add an optional `nextStep` to `MessageProcessorConfig`
   - In `kit/src/processor.ts`, add `nextStep?: string` to `MessageProcessorConfig`. Validate it in the constructor like `resolveCopy` does: a non-empty string, at most `LIMITS.reply.nextStepMaxLength` characters, and `detectEncoding(value) === 'GSM-7'`. Throw `Error('Invalid processor nextStep: ...')` otherwise
   - Pass it to `formatReply(text, { channel, continueConversation, nextStep })` in `render()`. When it is not set, pass nothing, so the default text is unchanged
   - Static only: one string per processor. It cannot follow a user's language. The app uses a short text that works in both (see task 13.1)
   - _Requirements: oja-ghost design D3, 8.5_
 
-- [ ] 1.4 Write the required test in `kit/test/processor-next-step.test.ts`
+- [x] 1.4 Write the required test in `kit/test/processor-next-step.test.ts`
   - With `nextStep: 'Send HELP'` an SMS reply ends with `Send HELP`, and without the option it ends with `Reply HELP for options` as before
   - An empty string, a 41-character string and a string with `₦` all make the constructor throw
   - STOP and DELETE acknowledgements (no continued conversation) carry no next step
   - _Requirements: oja-ghost design D3_
 
-- [ ] 1.5 Checkpoint: kit amendments
+- [x] 1.5 Checkpoint: kit amendments
   - Run `pnpm test` and `pnpm typecheck`. All existing kit tests pass unchanged
   - Append a short "Amendment 2026-11-19 (oja-ghost)" note to `.kiro/specs/kit-core/design.md` for `isSubscribed` and `nextStep`, and point to this spec
 
 ### 2. App scaffold, config and copy
 
-- [ ] 2.1 Scaffold the package
+- [x] 2.1 Scaffold the package
   - In `apps/oja-ghost/package.json` add `zod` to `dependencies` with the same range as `kit` (`^4.6.7`), and add `"test": "vitest run"` only if the other apps do. Run `pnpm install` and confirm no other package changes
   - Create the empty files listed in design.md "File layout", each with a one-line comment saying what it will hold. Keep `src/index.ts` exporting `{}` until task 13
   - _Requirements: oja-ghost 1.1, 1.7_
 
-- [ ] 2.2 Write `app.config.ts`, `copy.ts` and `keys.ts`
+- [x] 2.2 Write `app.config.ts`, `copy.ts` and `keys.ts`
   - `ojaConfig` with: id, name, `*384#`, `38400`, `MENU`, `Hi`; the 5 commodities (units, aliases, illustrative base prices) and 3 markets (aliases, multipliers) from design.md "Seed"; `limits`; `outlier`; `words` (both languages); `intentNames` and `intentTool`; `demo` (fake phone, sample book); and a note that all prices are illustrative
   - `copy: Record<Lang, Messages>` typed by one `Messages` interface, so a missing key in either language fails type-check. Include `ussd` variants where the design says a shorter text is needed. Mark `pcm` with `needsReview: true`. All text is GSM-7, amounts are `N`
   - `processorCopy` (one bilingual string per `ProcessorCopy` field, at most 160 characters) and `nextStep` (a short bilingual text of at most 40 characters, GSM-7)
   - `fill(template, values)` and `t(lang, key)` in `copy.ts`. `keys.ts` has the key builders and record types from the data model table
   - _Requirements: oja-ghost 1.5, 1.6, 8.1, 8.5, 8.6, 8.7, 10.12, 10.13, 11.2_
 
-- [ ] 2.3 Write the required PBT P9 in `apps/oja-ghost/test/copy.pbt.test.ts`
+- [x] 2.3 Write the required PBT P9 in `apps/oja-ghost/test/copy.pbt.test.ts`
   - **Property:** for every template key in both languages, filling the slots with generated names (from `genName`), `formatN` amounts and `agoText` values gives text that `detectEncoding` reports as `GSM-7`. Static strings (`processorCopy`, `nextStep`, menu labels) are also `GSM-7`. `formatN(n)` matches `/^N\d{1,3}(,\d{3})*$/`
   - Also assert `processorCopy` fields pass the kit's length limit, and `nextStep` is at most `LIMITS.reply.nextStepMaxLength`
   - _Requirements: oja-ghost 12.12, 10.12, 10.13, 8.5_
 
 ### 3. Money and names
 
-- [ ] 3.1 Implement `money.ts` and `names.ts`
+- [x] 3.1 Implement `money.ts` and `names.ts`
   - `parseAmount(s, max)` and `formatN(n)` as in design.md. `normaliseName` and `validName` (uses the kit's `detectEncoding`)
   - `parseAmount` rejects malformed comma groups (`4,50`), decimals without `k`, zero, negatives and values above `max`
   - _Requirements: oja-ghost 3.2, 5.3, 5.4, 10.12, 10.13_
 
-- [ ] 3.2 Write the required PBT P5 in `apps/oja-ghost/test/money.pbt.test.ts`
+- [x] 3.2 Write the required PBT P5 in `apps/oja-ghost/test/money.pbt.test.ts`
   - **Property:** `parseAmount(formatN(n), max) === n` and `parseAmount(String(n), max) === n` for `n` in `[1, max]`, including `1` and `max`
   - **Property:** for any string, a defined result is an integer in `[1, max]`
   - **Property:** `normaliseName` is idempotent and ignores case, accents and extra spaces
@@ -80,28 +80,28 @@ Run each test file with `pnpm vitest run <path>`. Property tests are named `*.pb
 
 ### 4. Ledger
 
-- [ ] 4.1 Implement `ledger.ts`
+- [x] 4.1 Implement `ledger.ts`
   - `applyLedger`, `balanceOf`, `netBalance`, `totalOwed` with the rules in design.md: no mutation, `paid` above the balance returns `exceeds_balance` and no ledger, `overpaid` is the only way to a negative balance, `undo` removes the highest `n`, restores `nextN` and drops an emptied debtor, limits from config
   - _Requirements: oja-ghost 5.1, 5.2, 5.5, 5.6, 5.7, 5.8, 5.9, 5.10_
 
-- [ ] 4.2 Write the required PBTs P1, P2 and P4 in `apps/oja-ghost/test/ledger.pbt.test.ts`
+- [x] 4.2 Write the required PBTs P1, P2 and P4 in `apps/oja-ghost/test/ledger.pbt.test.ts`
   - Put the generators (`genName`, `genAmount`, `genCmd`, `genCmds`) in `apps/oja-ghost/test/gen.ts`
   - **P1:** after every step of a replay, `balanceOf` for each debtor equals a naive reference model, and `netBalance` equals the sum of all signed entries
   - **P2:** after every step, every debtor has `balanceOf >= 0` or holds an `overpaid` entry. A `paid` above the balance returns `exceeds_balance` with no ledger
   - **P4:** the input ledger is deep-equal to a snapshot taken before the call, for every result (nothing is mutated), and every failed command leaves the ledger equal to its input
   - _Requirements: oja-ghost 12.1, 12.2, 12.4, 12.7, 12.8_
 
-- [ ] 4.3 Write the required PBT P6 in the same file
+- [x] 4.3 Write the required PBT P6 in the same file
   - **P6:** applying an accepted `owe` or `paid` and then `undo` returns a ledger deep-equal to the original, including `nextN`
   - _Requirements: oja-ghost 12.5_
 
 ### 5. Prices and outlier rejection
 
-- [ ] 5.1 Implement `prices.ts`
+- [x] 5.1 Implement `prices.ts`
   - `judge`, `average`, `addReport`, `displayStats`, `refPrice` with the rules in design.md. A rejected report leaves `accepted` unchanged, including when it carries a `replaceId`. Nothing is re-judged
   - _Requirements: oja-ghost 2.4, 2.5, 2.6, 3.3, 3.5, 4.1 to 4.5, 4.7, 11.3_
 
-- [ ] 5.2 Write the required PBT P3 in `apps/oja-ghost/test/prices.pbt.test.ts`
+- [x] 5.2 Write the required PBT P3 in `apps/oja-ghost/test/prices.pbt.test.ts`
   - **P3:** build a day from generated reports, then add an amount from an extreme-biased generator. Whenever the verdict is a rejection, `after.accepted` deep-equals `before.accepted` and `average` of both is equal. Include reports with `replaceId` of an accepted report
   - **Also:** `average` is the mean of the accepted amounts, rounded to the nearest 10, and ignores rejected ones. With 3 or more non-demo reports, `displayStats` ignores demo reports and reports `demo: false`
   - Keep any counterexample as a named regression example
@@ -192,7 +192,7 @@ Run each test file with `pnpm vitest run <path>`. Property tests are named `*.pb
   - Run the existing phantom-handset tests. They must pass unchanged
   - _Requirements: oja-ghost 1.3; design D1, D3_
 
-- [ ] 14.2 Swap the stand-in for the real app (needs your OK on Open Question 6 first)
+- [ ] 14.2 Swap the stand-in for the real app (Open Question 6 approved by the owner)
   - Add `@ghostline/oja-ghost` as a workspace dependency of `phantom-handset`. Change `getApps()` to take the shared `store` and `clock` from `createDeps`, and return `[createOjaGhost({ store, clock }), <stand-in Blackout Line>]`. Keep the Blackout Line stand-in until its own spec
   - Update the two "placeholder, confirm with the app specs" comments in `handset-config.ts` for `*384#` and `38400`. Do not change the values
   - Add a compile-time check in `phantom-handset/test` that `createOjaGhost()` is assignable to `HandsetApp`
@@ -218,5 +218,5 @@ Run each test file with `pnpm vitest run <path>`. Property tests are named `*.pb
 - [ ] 16.1 Final checks and notes
   - Run `pnpm test`, `pnpm test:pbt` and `pnpm typecheck`
   - Add a short section to the root `README.md` for Oja Ghost: codes, commands in both languages, "demo data, not live market data", and how to run the dispatcher. Do not claim a line count
-  - Add 3 lines to `docs/kiro-log.md`: the spec stages, the two kit amendments, and any property-test counterexample found
+  - Do not edit `docs/kiro-log.md`. It only takes entries the owner dictates
   - Report which Open Questions (4 pidgin review, 5 reminder trigger in the demo) are still open

@@ -71,6 +71,9 @@ export type { RateLimitState, RateLimitConfig } from './rate-limiter.js';
 export { ProductionLogger, DevLogger, createLogger } from './logger.js';
 export type { SafeLogger } from './logger.js';
 
+// Subscription
+export { isSubscribed } from './subscription.js';
+
 // Message processor
 export { MessageProcessor, DEFAULT_PROCESSOR_COPY } from './processor.js';
 export type { ProcessorCopy, ToolContext, MessageProcessorConfig } from './processor.js';

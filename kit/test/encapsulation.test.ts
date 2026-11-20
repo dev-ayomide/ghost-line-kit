@@ -49,6 +49,7 @@ const EXPECTED_RUNTIME_EXPORTS = [
   'formatReply',
   'formatResponse',
   'internalErrorCode',
+  'isSubscribed',
   'latestUssdInput',
   'maskPhoneNumber',
   'parseIntent',
