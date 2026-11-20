@@ -15,7 +15,7 @@ import {
   ToolRegistry,
   createLogger,
 } from '@ghostline/kit';
-import type { LlmProvider, Store, TraceEvent } from '@ghostline/kit';
+import type { Clock, LlmProvider, Store, TraceEvent } from '@ghostline/kit';
 import type { HandsetTraceEvent } from '../shared/api.js';
 import { getApps } from './apps.js';
 import type { HandlerApp, HandlerDeps } from './handler.js';
@@ -28,9 +28,16 @@ export function isLoopbackHost(host: string | undefined): boolean {
   return h === '' || h === '127.0.0.1' || h === '::1' || h === '[::1]' || h === 'localhost';
 }
 
-export function createDeps(env: Record<string, string | undefined>): HandlerDeps {
+/** Optional overrides, used by tests to observe the shared store and clock. */
+export interface SharedDeps {
+  store?: Store;
+  clock?: Clock;
+}
+export function createDeps(env: Record<string, string | undefined>, shared: SharedDeps = {}): HandlerDeps {
   let store: Store;
-  if (env['HANDSET_STORE'] === 'dynamo') {
+  if (shared.store) {
+    store = shared.store;
+  } else if (env['HANDSET_STORE'] === 'dynamo') {
     const tableName = env['DYNAMO_TABLE_NAME'];
     if (!tableName) throw new Error('DYNAMO_TABLE_NAME is required when HANDSET_STORE=dynamo');
     const region = env['AWS_REGION'];
@@ -38,7 +45,7 @@ export function createDeps(env: Record<string, string | undefined>): HandlerDeps
   } else {
     store = new MemoryStore();
   }
-  const clock = new SystemClock();
+  const clock: Clock = shared.clock ?? new SystemClock();
   const logger = createLogger(env['NODE_ENV']);
   const session = new SessionStateMachine({ store, clock });
   const rateLimiter = new RateLimiter({ store, clock });
@@ -52,10 +59,10 @@ export function createDeps(env: Record<string, string | undefined>): HandlerDeps
   };
 
   const apps = new Map<string, HandlerApp>();
-  for (const app of getApps()) {
+  for (const app of getApps({ store, clock })) {
     const tools = new ToolRegistry();
     app.tools.forEach((t) => tools.register(t));
-    const agent = new Agent({ llm, tools, intentNames: app.intentNames });
+    const agent = new Agent({ llm: app.llm ?? llm, tools, intentNames: app.intentNames });
     const processor = new MessageProcessor({
       store,
       session,
@@ -63,6 +70,7 @@ export function createDeps(env: Record<string, string | undefined>): HandlerDeps
       clock,
       rateLimiter,
       logger,
+      ...(app.nextStep ? { nextStep: app.nextStep } : {}),
       ...(app.copy ? { copy: app.copy } : {}),
       ...(app.buildToolCall ? { buildToolCall: app.buildToolCall } : {}),
       ...(app.renderOutput ? { renderOutput: app.renderOutput } : {}),

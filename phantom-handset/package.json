@@ -11,6 +11,7 @@
     "serve": "vite build --ssr server/main.ts --outDir dist-server && node dist-server/main.js"
   },
   "dependencies": {
+    "@ghostline/oja-ghost": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zod": "^4.6.7"

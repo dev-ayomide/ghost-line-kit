@@ -186,13 +186,13 @@ Run each test file with `pnpm vitest run <path>`. Property tests are named `*.pb
 
 ### 14. phantom-handset: classifier hook and the swap
 
-- [ ] 14.1 Add the optional `llm` and `nextStep` fields (approved D1, D3)
+- [x] 14.1 Add the optional `llm` and `nextStep` fields (approved D1, D3)
   - In `phantom-handset/server/apps.ts` add `llm?: LlmProvider` and `nextStep?: string` to `HandsetApp`
   - In `phantom-handset/server/wire.ts`, build each app's `Agent` with `app.llm ?? llm`, and pass `...(app.nextStep ? { nextStep: app.nextStep } : {})` to `MessageProcessor`. No other change. The stand-in apps keep working without the new fields
   - Run the existing phantom-handset tests. They must pass unchanged
   - _Requirements: oja-ghost 1.3; design D1, D3_
 
-- [ ] 14.2 Swap the stand-in for the real app (Open Question 6 approved by the owner)
+- [x] 14.2 Swap the stand-in for the real app (Open Question 6 approved by the owner)
   - Add `@ghostline/oja-ghost` as a workspace dependency of `phantom-handset`. Change `getApps()` to take the shared `store` and `clock` from `createDeps`, and return `[createOjaGhost({ store, clock }), <stand-in Blackout Line>]`. Keep the Blackout Line stand-in until its own spec
   - Update the two "placeholder, confirm with the app specs" comments in `handset-config.ts` for `*384#` and `38400`. Do not change the values
   - Add a compile-time check in `phantom-handset/test` that `createOjaGhost()` is assignable to `HandsetApp`

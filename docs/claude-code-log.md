@@ -155,3 +155,10 @@ Every action Claude Code takes: date, what, why, files.
 ## 2026-11-20: Started Kiro on Oja Ghost tasks 14.1 and 14.2
 - Asked Kiro (new chat) to add the optional `llm` and `nextStep` fields to the handset app shape and `wire.ts`, swap the stand-in for the real `createOjaGhost` (same store as the processor), and add the scripted walkthrough test. Optional tasks, 15 and 16 excluded. Kiro writes the code.
 - Files: `docs/claude-code-log.md`.
+
+## 2026-11-21: Verified Oja Ghost tasks 14.1 and 14.2, built by Kiro
+- `pnpm test` (`FC_NUM_RUNS=1000`): 51 files, 564 tests pass; typecheck clean in all packages; handset build clean (JS 295 kB).
+- Diff reviewed: `HandsetApp` gets optional `llm`/`nextStep`; `getApps({store, clock})` creates the real Oja Ghost with the handset's shared store and clock; Blackout Line remains a stand-in. New workspace dependency `@ghostline/oja-ghost` (internal, no new third-party package).
+- Live check through the standalone server (`POST /api/web/oja-ghost`, memory store): debt add and payment work and balances are right; trace events carry the masked number; STOP unsubscribes in both languages. Demo notice shows on the first reply.
+- Problems found, not fixed by me (feature code is Kiro's): "how much does bola owe" is misrouted to `price`; "price of garri" without a market gives an unhelpful reply. Written to `docs/HANDOFF-TO-KIRO.md`.
+- Files by Kiro: `phantom-handset/{server/apps.ts,server/wire.ts,src/config/handset-config.ts,test/oja-swap.test.ts,package.json}`, `apps/oja-ghost/package.json`, `.kiro/specs/oja-ghost/tasks.md`, `pnpm-lock.yaml`.

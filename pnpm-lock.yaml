@@ -212,6 +212,9 @@ importers:
 
   phantom-handset:
     dependencies:
+      '@ghostline/oja-ghost':
+        specifier: workspace:*
+        version: link:../apps/oja-ghost
       react:
         specifier: ^19.0.0
         version: 19.3.1

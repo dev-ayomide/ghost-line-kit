@@ -225,10 +225,10 @@ export const handsetConfig = {
     {
       id: 'oja-ghost',
       name: 'Oja Ghost',
-      // placeholder, confirm with the app specs
+      // Demo code for the handset, not a registered telco code (oja-ghost spec, requirement 1.3)
       ussdCode: '*384#',
       ussdOpenText: 'MENU',
-      // placeholder, confirm with the app specs
+      // Demo short code for the handset, not a registered telco short code (oja-ghost spec, requirement 1.3)
       smsShortCode: '38400',
       tagline: 'Prices, your debt book and reminders.',
       helloSms: 'Hi',
