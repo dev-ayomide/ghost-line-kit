@@ -139,3 +139,8 @@ Every action Claude Code takes: date, what, why, files.
 - Kit: new `isSubscribed` export (only a one-line addition to the encapsulation test list) and optional `nextStep`, with required tests. Existing kit tests unchanged.
 - App: scaffold, config, copy, money, names, ledger, prices written; PBTs P1, P2, P4, P5, P6, P9 and P3 pass. Reviewed `ledger.ts`: pure, no mutation, `paid` above balance rejected, `overpaid` the only path to a negative balance, undo restores `nextN`. App imports only `@ghostline/kit` (detectEncoding) and relative files; no `Date.now` or `Math.random`.
 - Files by Kiro: `kit/src/{subscription.ts,processor.ts,index.ts}`, kit tests, `apps/oja-ghost/src/*`, `apps/oja-ghost/test/*`, `pnpm-lock.yaml`, spec files. Claude Code wrote none of it.
+
+## 2026-11-20: Correction to the batch 1 entry, and start of Oja Ghost batch 2
+- Correction: I described the "dotted capital I" regression test in `apps/oja-ghost/test/money.pbt.test.ts` as a bug found by the property tests. That is wrong. The test file itself says it was found by reasoning, not by fast-check, and Kiro's report says it is not counted as a found bug. No property test has found a counterexample so far. Do not use it as PBT evidence in the write-up. (The kit-core spec may have genuine counterexample records; check `docs/kiro-log.md` and the test files before claiming any.)
+- Batch 2: asked Kiro to run Oja Ghost tasks 6.1 to 13.2 (dates, reminders, parser, tools, flows, dispatcher, seed, erase, createOjaGhost), skipping optional tasks, and stop after 13.2.
+- Files: `docs/claude-code-log.md`.
