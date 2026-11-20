@@ -50,7 +50,15 @@ export interface WordLists {
     paid: readonly string[];
     overpaid: readonly string[];
     cost: readonly string[];
+    /** Trailing word in "<name> balance". */
+    balance: readonly string[];
   }>;
+  /** Small words the parser skips between a command and its arguments. */
+  filler: readonly string[];
+  /** Leading words skipped before a name in a reminder: "remind me to collect Bola friday". */
+  remindNoise: readonly string[];
+  /** Words allowed in front of a date or time: "on friday", "at 14:30". Dropped before parsing. */
+  whenLead: readonly string[];
 }
 
 export const INTENT_NAMES = [
@@ -78,9 +86,17 @@ const en: Messages = {
   demoNotice: 'Demo: prices and the sample book here are for show, not real market data.',
   help: 'Demo data. Price: price rice mile12. Report: report rice mile12 68000. Debt: Bola owes 4500. Paid: Bola paid 2000. Book: book. Remind: remind Bola friday. MENU for menu.',
   unrecognized: 'Sorry, I did not get that. Try: price rice mile12, Bola owes 4500, or book. Send HELP for more.',
+  helpUssd: 'Demo. Send 00 for menu. SMS: price rice mile12, Bola owes 4500, book',
   unrecognizedUssd: 'Not understood. Send 00 for the menu.',
   tryAgain: 'Try again. Send HELP for options.',
   rateLimited: 'Too many messages. Wait a minute and try again.',
+
+  agoNow: 'just now',
+  agoMin: '{n} min ago',
+  agoHour: '{n} hour ago',
+  agoHours: '{n} hours ago',
+  agoDay: '{n} day ago',
+  agoDays: '{n} days ago',
 
   priceLive: '{commodity} ({unit}) at {market}: {amount}. From {n} reports, newest {ago}.',
   priceLiveDemo: 'Demo: {commodity} ({unit}) at {market}: {amount}. From {n} sample reports, newest {ago}.',
@@ -98,6 +114,7 @@ const en: Messages = {
   reportAdded: 'Thanks. {commodity} at {market}: {amount} added. Today\'s average is {avg} from {n} reports.',
   reportAddedDemo: 'Thanks. {commodity} at {market}: {amount} added. Demo average with samples is {avg} from {n} reports.',
   reportNotAdded: 'Not added: {amount} looks far from today\'s range ({low} to {high}). If it is right, check it and send again: report {commodity} {market} {amount}',
+  reportNotAddedUssd: 'Not added: {amount} is far from today\'s range ({low} to {high}). Check and try again.',
   reportCap: 'You sent {max} reports today. Try again tomorrow.',
   reportNeedAmount: 'I need the price. Example: report rice mile12 68000',
   badAmount: 'Send the price in whole naira, like 68000 or 68k.',
@@ -106,6 +123,7 @@ const en: Messages = {
   ledgerPaid: 'Saved. {name} paid {amount}. Balance: {balance}.',
   ledgerOverpaid: 'Saved. {name} has credit of {credit}.',
   exceedsBalance: 'Not saved. {name} owes only {balance}, not {amount}. To record the extra as credit, send: overpaid {name} {amount}',
+  exceedsBalanceUssd: 'Not saved. {name} owes only {balance}, not {amount}. Send: overpaid {name} {amount}',
   unknownDebtor: '{name} is not in your book. Names: {list}. To add, send: {name} owes 1000',
   unknownDebtorEmpty: '{name} is not in your book yet. To add, send: {name} owes 1000',
   invalidName: 'Use plain letters for the name (up to 20), no symbols. Example: Bola owes 4500',
@@ -120,6 +138,7 @@ const en: Messages = {
   bookSummary: 'You are owed {total}:\n{rows}',
   bookSummaryDemo: 'Demo book. You are owed {total}:\n{rows}',
   bookSummaryUssd: 'Owed {total}:\n{rows}\nFull list: SMS book',
+  bookSummaryDemoUssd: 'Demo book. Owed {total}:\n{rows}\nFull list: SMS book',
   bookRow: '{name} {balance}',
   bookMore: '{extra} more. Send: book NAME',
   bookCredit: 'Credit: {name} {credit}',
@@ -148,10 +167,11 @@ const en: Messages = {
   reminderSmsDebt: 'Reminder: collect {amount} from {name} today.',
   reminderSmsSupplier: 'Reminder: pay {name} {amount} today.',
   reminderSmsSupplierNoAmount: 'Reminder: pay {name} today.',
+  reminderNextStep: 'Send HELP for options',
 
   languageSet: 'Language set to English.',
 
-  menuTitle: 'Oja Ghost',
+  menuTitle: 'Oja Ghost (demo)',
   menuPrice: 'Price',
   menuReport: 'Report price',
   menuBook: 'Debt book',
@@ -186,9 +206,17 @@ const pcm: Messages = {
   demoNotice: 'Demo: the prices and sample book na for show, e no be real market data.',
   help: 'Demo data. Price: price rice mile12. Report: report rice mile12 68000. Debt: Bola owe 4500. Paid: Bola don pay 2000. Book: book. Remind: remind Bola friday. MENU for menu.',
   unrecognized: 'Abeg, I no understand. Try: price rice mile12, Bola owe 4500, or book. Send HELP make you see more.',
+  helpUssd: 'Demo. Send 00 for menu. SMS: price rice mile12, Bola owe 4500, book',
   unrecognizedUssd: 'I no understand. Send 00 for menu.',
   tryAgain: 'Try again. Send HELP make you see options.',
   rateLimited: 'Too many messages. Wait small and try again.',
+
+  agoNow: 'just now',
+  agoMin: '{n} min ago',
+  agoHour: '{n} hour ago',
+  agoHours: '{n} hours ago',
+  agoDay: '{n} day ago',
+  agoDays: '{n} days ago',
 
   priceLive: '{commodity} ({unit}) for {market}: {amount}. From {n} reports, the newest na {ago}.',
   priceLiveDemo: 'Demo: {commodity} ({unit}) for {market}: {amount}. From {n} sample reports, the newest na {ago}.',
@@ -206,6 +234,7 @@ const pcm: Messages = {
   reportAdded: 'Thank you. {commodity} for {market}: {amount} don enter. Today average na {avg} from {n} reports.',
   reportAddedDemo: 'Thank you. {commodity} for {market}: {amount} don enter. Demo average with samples na {avg} from {n} reports.',
   reportNotAdded: 'E no enter: {amount} far from today range ({low} to {high}). If e correct, check am and send again: report {commodity} {market} {amount}',
+  reportNotAddedUssd: 'E no enter: {amount} far from today range ({low} to {high}). Check am and try again.',
   reportCap: 'You don send {max} reports today. Try again tomorrow.',
   reportNeedAmount: 'I need the price. Example: report rice mile12 68000',
   badAmount: 'Send the price in whole naira, like 68000 or 68k.',
@@ -214,6 +243,7 @@ const pcm: Messages = {
   ledgerPaid: 'I don save am. {name} don pay {amount}. Balance: {balance}.',
   ledgerOverpaid: 'I don save am. {name} get credit of {credit}.',
   exceedsBalance: 'I no save am. {name} owe only {balance}, no be {amount}. To put the extra as credit, send: overpaid {name} {amount}',
+  exceedsBalanceUssd: 'I no save am. {name} owe only {balance}, no be {amount}. Send: overpaid {name} {amount}',
   unknownDebtor: '{name} no dey your book. Names: {list}. To add, send: {name} owe 1000',
   unknownDebtorEmpty: '{name} no dey your book yet. To add, send: {name} owe 1000',
   invalidName: 'Use plain letters for the name (up to 20), no symbol. Example: Bola owe 4500',
@@ -228,6 +258,7 @@ const pcm: Messages = {
   bookSummary: 'Dem owe you {total}:\n{rows}',
   bookSummaryDemo: 'Demo book. Dem owe you {total}:\n{rows}',
   bookSummaryUssd: 'Dem owe {total}:\n{rows}\nFull list: SMS book',
+  bookSummaryDemoUssd: 'Demo book. Dem owe {total}:\n{rows}\nFull list: SMS book',
   bookRow: '{name} {balance}',
   bookMore: '{extra} more. Send: book NAME',
   bookCredit: 'Credit: {name} {credit}',
@@ -256,10 +287,11 @@ const pcm: Messages = {
   reminderSmsDebt: 'Reminder: collect {amount} from {name} today.',
   reminderSmsSupplier: 'Reminder: pay {name} {amount} today.',
   reminderSmsSupplierNoAmount: 'Reminder: pay {name} today.',
+  reminderNextStep: 'Send HELP to see options',
 
   languageSet: 'Language don change to Pidgin.',
 
-  menuTitle: 'Oja Ghost',
+  menuTitle: 'Oja Ghost (demo)',
   menuPrice: 'Price',
   menuReport: 'Report price',
   menuBook: 'Debt book',
@@ -388,7 +420,11 @@ export const ojaConfig = {
         paid: ['paid'],
         overpaid: ['overpaid'],
         cost: ['cost', 'costs'],
+        balance: ['balance'],
       },
+      filler: ['for', 'at', 'in', 'of', 'the'],
+      remindNoise: ['me', 'to', 'collect', 'from', 'about'],
+      whenLead: ['on', 'by', 'at'],
     },
     pcm: {
       command: {
@@ -412,9 +448,19 @@ export const ojaConfig = {
         paid: ['don pay', 'paid'],
         overpaid: ['don overpay', 'overpaid'],
         cost: ['don cost', 'cost'],
+        balance: ['balance'],
       },
+      filler: ['for', 'at', 'in', 'of', 'the', 'dey', 'na'],
+      remindNoise: ['me', 'make', 'collect', 'from', 'about'],
+      whenLead: ['on', 'by', 'at', 'for'],
     },
   } as Readonly<Record<Lang, WordLists>>,
+
+  /** Words that pick a language in "language pidgin" and "english". */
+  languageWords: {
+    en: ['english', 'en'],
+    pcm: ['pidgin', 'pcm', 'naija'],
+  } as Readonly<Record<Lang, readonly string[]>>,
 
   intentNames: INTENT_NAMES as readonly string[],
 

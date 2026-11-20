@@ -109,18 +109,18 @@ Run each test file with `pnpm vitest run <path>`. Property tests are named `*.pb
 
 ### 6. Dates and reminders
 
-- [ ] 6.1 Implement `when.ts` and `reminders.ts`
+- [x] 6.1 Implement `when.ts` and `reminders.ts`
   - `lagosDay`, `parseWhen` and `agoText` (design.md "when.ts"), then `createReminder`, `dueReminders`, `activeList`, `cancelNth`. Dates are in Lagos time (UTC+1), default 08:00, at most 90 days ahead, never in the past
   - _Requirements: oja-ghost 7.1 to 7.7, 7.14_
 
-- [ ] 6.2 Write the required PBT P7 in `apps/oja-ghost/test/reminders.pbt.test.ts`
+- [x] 6.2 Write the required PBT P7 in `apps/oja-ghost/test/reminders.pbt.test.ts`
   - **P7:** `dueReminders(list, now)` equals `list.filter(r => r.status === 'pending' && r.dueAt <= now)` sorted by `dueAt`, for generated lists and times
   - Add example cases for `parseWhen`: `tomorrow`, `friday` on a Friday (next week), `15 dec` after 15 Dec (next year), `in 91 days` (rejected), a past time (rejected)
   - _Requirements: oja-ghost 12.6, 7.3, 7.4, 7.14_
 
 ### 7. Parser and classifier
 
-- [ ] 7.1 Implement `parse.ts` and `provider.ts`
+- [x] 7.1 Implement `parse.ts` and `provider.ts`
   - `routeIntent(text)` and `parseCommand(text)` with the grammar in design.md, using the word lists from config (both languages). `routeIntent` never returns `unrecognized`
   - `OjaRuleProvider implements LlmProvider`: `classifyIntent` returns `{ name: routeIntent(message), parameters: {}, rawMessage: message }`. `complete` returns a short fixed string
   - Names are the words between the command and the amount or verb, 1 to 20 characters. Commodity and market use the longest alias first
@@ -133,7 +133,7 @@ Run each test file with `pnpm vitest run <path>`. Property tests are named `*.pb
 
 ### 8. Tools: price, report, ledger, book
 
-- [ ] 8.1 Implement `defineTool` and the tools `price`, `report_price`, `ledger` and `book` in `tools.ts`
+- [x] 8.1 Implement `defineTool` and the tools `price`, `report_price`, `ledger` and `book` in `tools.ts`
   - Shared `Input` zod schema. `defineTool` does seed, language load, first-reply demo notice and calls the handler, as in design.md
   - `report_price` writes in the order day record, pointer, index, and enforces the 20-per-day cap. `ledger` replies with the exact `overpaid` message after `exceeds_balance`. `book` shows 5 rows on SMS and web, 3 on USSD
   - Every reply is built with `fill` and the formatters, never string-concatenated user text outside `validName`
@@ -141,7 +141,7 @@ Run each test file with `pnpm vitest run <path>`. Property tests are named `*.pb
 
 ### 9. Flows and the remaining tools
 
-- [ ] 9.1 Implement `flows.ts` and the tools `menu`, `help`, `step`, `language`, `remind` and `reminders`
+- [x] 9.1 Implement `flows.ts` and the tools `menu`, `help`, `step`, `language`, `remind` and `reminders`
   - The flow record, expiry and the `0` and `00` rules from design.md. Screens are built with the kit's `renderMenuScreens` and fit 140 characters
   - `step` order: back or menu, active flow input, digit starts a flow, name-first command, else the `unrecognized` reply with 3 examples
   - `remind` and `reminders` read and write `oja:rem:<phone>` and `oja:rem-index`
@@ -149,11 +149,11 @@ Run each test file with `pnpm vitest run <path>`. Property tests are named `*.pb
 
 ### 10. Dispatcher
 
-- [ ] 10.1 Implement `dispatch.ts`
+- [x] 10.1 Implement `dispatch.ts`
   - `dispatchDueReminders` with the steps in design.md: `isSubscribed`, balance check for debt reminders, outbound rate limit, `formatReply` with the app's next step, send, mark and write after each reminder, three attempts, remove the phone from the index when nothing is pending
   - _Requirements: oja-ghost 7.8 to 7.13, 7.15, 9.5_
 
-- [ ] 10.2 Write the required PBT P8 in `apps/oja-ghost/test/dispatch.pbt.test.ts`
+- [x] 10.2 Write the required PBT P8 in `apps/oja-ghost/test/dispatch.pbt.test.ts`
   - **P8:** with a `MemoryStore`, a recording fake `ChannelAdapter` that returns `ok`, a `TestClock` and generated reminders, running `dispatchDueReminders` twice at the same time gives the same send count after run 2 as after run 1
   - **Also:** a fake that fails twice then succeeds ends `sent` after 3 runs. A fake that always fails ends `failed` after 3 runs. A number that sent STOP is `skipped` and receives nothing. A debt reminder whose balance is 0 is `skipped`
   - Keep any counterexample as a named regression example
@@ -161,26 +161,26 @@ Run each test file with `pnpm vitest run <path>`. Property tests are named `*.pb
 
 ### 11. Seed
 
-- [ ] 11.1 Implement `seed.ts`
+- [x] 11.1 Implement `seed.ts`
   - `seedDemo(store, clock)`, guarded by `oja:seed`: 3 sample reports (`demo: true`) per commodity and market from the reference price, the `pxlast` pointers, and the demo ledger for the fake number. Deterministic, no randomness
   - _Requirements: oja-ghost 1.4, 11.1 to 11.6_
 
 ### 12. `eraseUserData`
 
-- [ ] 12.1 Implement the DELETE sweep and its test
+- [x] 12.1 Implement the DELETE sweep and its test
   - `eraseUserData(phone)` as in design.md "Privacy": remove the Trader's reports from the day records through `oja:rep:<phone>`, delete the Trader's `oja:` keys, remove the phone from `oja:rem-index`. Safe to call twice
   - Write the required example test `apps/oja-ghost/test/erase.test.ts`: create a language, a ledger, a flow, a reminder and two price reports (one accepted, one rejected), call `eraseUserData`, and assert no `oja:` key for the phone remains, other Traders' reports and the day average from them are unchanged, and a second call does nothing
   - _Requirements: oja-ghost 9.3, 9.4_
 
 ### 13. `createOjaGhost` and the package entry
 
-- [ ] 13.1 Implement `index.ts`
+- [x] 13.1 Implement `index.ts`
   - `createOjaGhost(deps?)` returning `OjaGhostApp` (add `nextStep` to the interface in design.md), with `buildToolCall` from the intent to tool table, `intentNames` from config, `copy` from `processorCopy`, `llm` from `OjaRuleProvider`, and `eraseUserData`. Defaults: `MemoryStore`, `SystemClock`, `demo: true`
   - Export `dispatchDueReminders` and the types. Export nothing else from the app internals
   - Update the design.md D3 row and the interface to say `nextStep` is now a kit option
   - _Requirements: oja-ghost 1.1 to 1.6_
 
-- [ ] 13.2 Checkpoint: app
+- [x] 13.2 Checkpoint: app
   - Run `pnpm test` and `pnpm typecheck`. All required PBTs (P1 to P9) pass
   - Replace the placeholder smoke test only if it no longer applies. Do not delete it otherwise
 

@@ -144,3 +144,10 @@ Every action Claude Code takes: date, what, why, files.
 - Correction: I described the "dotted capital I" regression test in `apps/oja-ghost/test/money.pbt.test.ts` as a bug found by the property tests. That is wrong. The test file itself says it was found by reasoning, not by fast-check, and Kiro's report says it is not counted as a found bug. No property test has found a counterexample so far. Do not use it as PBT evidence in the write-up. (The kit-core spec may have genuine counterexample records; check `docs/kiro-log.md` and the test files before claiming any.)
 - Batch 2: asked Kiro to run Oja Ghost tasks 6.1 to 13.2 (dates, reminders, parser, tools, flows, dispatcher, seed, erase, createOjaGhost), skipping optional tasks, and stop after 13.2.
 - Files: `docs/claude-code-log.md`.
+
+## 2026-11-20: Verified Oja Ghost tasks 6.1 to 13.2, built by Kiro
+- `pnpm test` (`FC_NUM_RUNS=1000`): 50 files, 562 tests pass; typecheck clean in all packages.
+- Reviewed `dispatch.ts` and `index.ts` and `erase.ts`: reminders are sent only to the owning Trader's number; order is subscription, debt balance, outbound rate limit, send, mark; a failing phone does not stop others; 3 attempts then `failed`; logging only through the kit SafeLogger. `eraseUserData` removes reports, language, book, flow, reminders, index entry, reporter index, and is safe to run twice. Demo notice is skipped on USSD (140-char limit) and carried in menu/help text instead.
+- Boundary check: app imports only `@ghostline/kit` and `zod`; no `Date.now`, `Math.random`, `process.env` or `console` in `apps/oja-ghost/src`.
+- Not yet done: live walkthrough in the handset (task 14), optional tasks 7.2, 15.x, README task 16.1. I did not read every line of `parse.ts`, `tools.ts` and `flows.ts`; they are covered by tests and will be exercised in the handset next.
+- Files by Kiro: `apps/oja-ghost/src/*`, `apps/oja-ghost/test/*`, `.kiro/specs/oja-ghost/tasks.md`. Claude Code wrote none of it.

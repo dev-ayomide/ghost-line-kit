@@ -16,10 +16,19 @@ export interface Messages {
   // First reply, help, errors
   demoNotice: string;
   help: string;
+  helpUssd: string;
   unrecognized: string;
   unrecognizedUssd: string;
   tryAgain: string;
   rateLimited: string;
+
+  // Time ("{n} min ago")
+  agoNow: string;
+  agoMin: string;
+  agoHour: string;
+  agoHours: string;
+  agoDay: string;
+  agoDays: string;
 
   // Price
   priceLive: string;
@@ -39,6 +48,7 @@ export interface Messages {
   reportAdded: string;
   reportAddedDemo: string;
   reportNotAdded: string;
+  reportNotAddedUssd: string;
   reportCap: string;
   reportNeedAmount: string;
   badAmount: string;
@@ -48,6 +58,7 @@ export interface Messages {
   ledgerPaid: string;
   ledgerOverpaid: string;
   exceedsBalance: string;
+  exceedsBalanceUssd: string;
   unknownDebtor: string;
   unknownDebtorEmpty: string;
   invalidName: string;
@@ -63,6 +74,7 @@ export interface Messages {
   bookSummary: string;
   bookSummaryDemo: string;
   bookSummaryUssd: string;
+  bookSummaryDemoUssd: string;
   bookRow: string;
   bookMore: string;
   bookCredit: string;
@@ -92,6 +104,8 @@ export interface Messages {
   reminderSmsDebt: string;
   reminderSmsSupplier: string;
   reminderSmsSupplierNoAmount: string;
+  /** Next step on a reminder SMS, in the Trader's language. GSM-7, at most 40 characters. */
+  reminderNextStep: string;
 
   // Language
   languageSet: string;

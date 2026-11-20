@@ -2,14 +2,18 @@ import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { detectEncoding, LIMITS } from '@ghostline/kit';
 import { ojaConfig } from '../src/app.config.ts';
-import { fill, LANGS, slotsOf, type MessageKey, type Messages } from '../src/copy.ts';
+import { fill, LANGS, slotsOf, type Lang, type MessageKey, type Messages } from '../src/copy.ts';
 import { formatN } from '../src/money.ts';
+import { agoText } from '../src/when.ts';
 import { validName } from '../src/names.ts';
 import { genAmount, genName } from './gen.ts';
 
-// TODO(task 6.1): the time slots use fixed phrases. Once when.ts exists, generate
-// {ago} with agoText(deltaMs, lang) and {when}/{date} with its date formatters.
-const TIME_POOL = ['10 min ago', '2 hours ago', '1 day ago', '12 Nov', 'Fri 15 Dec, 08:00', 'today 14:30'];
+// {ago} is generated with agoText. {when} and {date} still use fixed phrases (no date formatter exists yet).
+const DATE_POOL = ['12 Nov', 'Fri 15 Dec, 08:00', 'today 14:30'];
+const genDelta = fc.oneof(
+  fc.integer({ min: 0, max: 3 * 86_400_000 * 40 }),
+  fc.constantFrom(0, 59_999, 60_000, 3_599_999, 3_600_000, 86_399_999, 86_400_000),
+);
 const WORD_POOL = ['rice', 'Rice', 'Mile 12', 'Oyingbo', 'Palm oil', '50kg bag', 'paint bucket', 'Bola N4,500, Chidi N8,000'];
 
 const keysOf = (m: Messages): MessageKey[] =>
@@ -22,13 +26,14 @@ const isTimeSlot = (s: string) => /^(ago|when|date)$/.test(s);
 const isCountSlot = (s: string) => /^(n|max|extra)$/.test(s);
 
 /** A value for each slot of a template, using the generators. */
-function genValues(slots: string[]): fc.Arbitrary<Record<string, string>> {
+function genValues(slots: string[], lang: Lang): fc.Arbitrary<Record<string, string>> {
   const entries = slots.map((slot) => {
     let a: fc.Arbitrary<string>;
     if (isAmountSlot(slot)) a = genAmount.map(formatN);
     // Names are echoed only when valid (GSM-7, plain letters), as the tools do.
     else if (isNameSlot(slot)) a = genName.filter(validName).map((s) => s.trim());
-    else if (isTimeSlot(slot)) a = fc.constantFrom(...TIME_POOL);
+    else if (slot === 'ago') a = genDelta.map((d) => agoText(d, lang));
+    else if (isTimeSlot(slot)) a = fc.constantFrom(...DATE_POOL);
     else if (isCountSlot(slot)) a = fc.integer({ min: 0, max: 200 }).map(String);
     else a = fc.constantFrom(...WORD_POOL);
     return a.map((v) => [slot, v] as const);
@@ -46,7 +51,7 @@ describe('Property 9: replies are GSM-7 and money is plain', () => {
       it(`${lang}.${key} filled with generated values is GSM-7`, () => {
         const slots = slotsOf(template);
         fc.assert(
-          fc.property(genValues(slots), (values) => {
+          fc.property(genValues(slots, lang), (values) => {
             const text = fill(template, values);
             expect(detectEncoding(text)).toBe('GSM-7');
             expect(text).not.toMatch(/[{}]/);
