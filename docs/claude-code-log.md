@@ -162,3 +162,7 @@ Every action Claude Code takes: date, what, why, files.
 - Live check through the standalone server (`POST /api/web/oja-ghost`, memory store): debt add and payment work and balances are right; trace events carry the masked number; STOP unsubscribes in both languages. Demo notice shows on the first reply.
 - Problems found, not fixed by me (feature code is Kiro's): "how much does bola owe" is misrouted to `price`; "price of garri" without a market gives an unhelpful reply. Written to `docs/HANDOFF-TO-KIRO.md`.
 - Files by Kiro: `phantom-handset/{server/apps.ts,server/wire.ts,src/config/handset-config.ts,test/oja-swap.test.ts,package.json}`, `apps/oja-ghost/package.json`, `.kiro/specs/oja-ghost/tasks.md`, `pnpm-lock.yaml`.
+
+## 2026-11-21: Asked Kiro to fix the Oja Ghost parser bug
+- Asked Kiro (new chat "Fix Oja Ghost Parser") to fix "how much does bola owe" being routed to `price` in `parse.ts`, add example tests for it and its variants, and make "price of garri" without a market reply helpfully. Allowed one read-only command prompt once. Kiro writes the code.
+- Files: `docs/claude-code-log.md`.
