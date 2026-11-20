@@ -151,3 +151,7 @@ Every action Claude Code takes: date, what, why, files.
 - Boundary check: app imports only `@ghostline/kit` and `zod`; no `Date.now`, `Math.random`, `process.env` or `console` in `apps/oja-ghost/src`.
 - Not yet done: live walkthrough in the handset (task 14), optional tasks 7.2, 15.x, README task 16.1. I did not read every line of `parse.ts`, `tools.ts` and `flows.ts`; they are covered by tests and will be exercised in the handset next.
 - Files by Kiro: `apps/oja-ghost/src/*`, `apps/oja-ghost/test/*`, `.kiro/specs/oja-ghost/tasks.md`. Claude Code wrote none of it.
+
+## 2026-11-20: Started Kiro on Oja Ghost tasks 14.1 and 14.2
+- Asked Kiro (new chat) to add the optional `llm` and `nextStep` fields to the handset app shape and `wire.ts`, swap the stand-in for the real `createOjaGhost` (same store as the processor), and add the scripted walkthrough test. Optional tasks, 15 and 16 excluded. Kiro writes the code.
+- Files: `docs/claude-code-log.md`.
