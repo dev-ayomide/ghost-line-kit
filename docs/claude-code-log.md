@@ -166,3 +166,8 @@ Every action Claude Code takes: date, what, why, files.
 ## 2026-11-21: Asked Kiro to fix the Oja Ghost parser bug
 - Asked Kiro (new chat "Fix Oja Ghost Parser") to fix "how much does bola owe" being routed to `price` in `parse.ts`, add example tests for it and its variants, and make "price of garri" without a market reply helpfully. Allowed one read-only command prompt once. Kiro writes the code.
 - Files: `docs/claude-code-log.md`.
+
+## 2026-11-21: Verified Kiro's parser fix
+- `pnpm test` (`FC_NUM_RUNS=1000`): 52 files, 587 tests pass (up from 564, new `parse.test.ts`); typecheck clean.
+- Live check through the standalone server: "how much does bola owe", "how much bola owe me", "bola balance", "wetin bola owe" all return Bola's balance; "price of garri" now asks which market with examples; "price rice mile12" and debt adding still work.
+- Files by Kiro: `apps/oja-ghost/src/{parse.ts,app.config.ts,copy.ts,tools.ts}`, `apps/oja-ghost/test/parse.test.ts`. Claude Code wrote none of it.

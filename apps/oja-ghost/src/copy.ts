@@ -43,6 +43,7 @@ export interface Messages {
   priceRefUssd: string;
   unknownCommodity: string;
   unknownMarket: string;
+  needMarket: string;
 
   // Report
   reportAdded: string;

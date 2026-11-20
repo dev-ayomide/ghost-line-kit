@@ -53,6 +53,8 @@ export interface WordLists {
     /** Trailing word in "<name> balance". */
     balance: readonly string[];
   }>;
+  /** Openers of a balance question: "how much does Bola owe", "wetin Bola owe". Checked before the price command. */
+  balanceLead: readonly string[];
   /** Small words the parser skips between a command and its arguments. */
   filler: readonly string[];
   /** Leading words skipped before a name in a reminder: "remind me to collect Bola friday". */
@@ -110,6 +112,7 @@ const en: Messages = {
   priceRefUssd: 'Demo price {commodity} {market}: {amount}. No reports yet.',
   unknownCommodity: 'I do not know that item. Try: {list}. Example: price rice mile12',
   unknownMarket: 'I do not know that market. Try: {list}. Example: price rice mile12',
+  needMarket: 'Which market for {commodity}? Try: {list}. Example: price {commodity} mile12',
 
   reportAdded: 'Thanks. {commodity} at {market}: {amount} added. Today\'s average is {avg} from {n} reports.',
   reportAddedDemo: 'Thanks. {commodity} at {market}: {amount} added. Demo average with samples is {avg} from {n} reports.',
@@ -230,6 +233,7 @@ const pcm: Messages = {
   priceRefUssd: 'Demo price {commodity} {market}: {amount}. No report yet.',
   unknownCommodity: 'I no know that item. Try: {list}. Example: price rice mile12',
   unknownMarket: 'I no know that market. Try: {list}. Example: price rice mile12',
+  needMarket: 'Which market for {commodity}? Try: {list}. Example: price {commodity} mile12',
 
   reportAdded: 'Thank you. {commodity} for {market}: {amount} don enter. Today average na {avg} from {n} reports.',
   reportAddedDemo: 'Thank you. {commodity} for {market}: {amount} don enter. Demo average with samples na {avg} from {n} reports.',
@@ -422,6 +426,7 @@ export const ojaConfig = {
         cost: ['cost', 'costs'],
         balance: ['balance'],
       },
+      balanceLead: ['how much does', 'how much do', 'how much'],
       filler: ['for', 'at', 'in', 'of', 'the'],
       remindNoise: ['me', 'to', 'collect', 'from', 'about'],
       whenLead: ['on', 'by', 'at'],
@@ -450,6 +455,7 @@ export const ojaConfig = {
         cost: ['don cost', 'cost'],
         balance: ['balance'],
       },
+      balanceLead: ['how much', 'wetin'],
       filler: ['for', 'at', 'in', 'of', 'the', 'dey', 'na'],
       remindNoise: ['me', 'make', 'collect', 'from', 'about'],
       whenLead: ['on', 'by', 'at', 'for'],

@@ -154,6 +154,9 @@ function resolveRef(
   const c = 'commodity' in cmd && cmd.commodity ? commodityDef(cmd.commodity) : undefined;
   if (!c) return { ok: false, reply: fill(msg(lang, 'unknownCommodity'), { list: commodityList(lang) }) };
   const m = 'market' in cmd && cmd.market ? marketDef(cmd.market) : undefined;
+  if (!m && cmd.kind === 'price' && !cmd.unknownMarket) {
+    return { ok: false, reply: fill(msg(lang, 'needMarket'), { commodity: c.name[lang], list: marketList() }) };
+  }
   if (!m) return { ok: false, reply: fill(msg(lang, 'unknownMarket'), { list: marketList() }) };
   return { ok: true, value: { commodity: c, market: m } };
 }

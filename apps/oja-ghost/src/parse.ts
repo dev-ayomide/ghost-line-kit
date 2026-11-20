@@ -84,6 +84,7 @@ const VERBS: VerbEntry[] = WORDS.flatMap((w) =>
 const set = (pick: (w: WordLists) => readonly string[]): Set<string> => new Set(WORDS.flatMap((w) => [...pick(w)]));
 const FILLER = set((w) => w.filler);
 const NOISE = set((w) => w.remindNoise);
+const BALANCE_LEADS: string[][] = WORDS.flatMap((w) => w.balanceLead.map(splitPhrase)).sort((a, b) => b.length - a.length);
 const BALANCE = set((w) => w.verbs.balance);
 
 interface AliasEntry {
@@ -146,6 +147,22 @@ function firstAmount(norm: string[], start: number): number | undefined {
   return undefined;
 }
 
+/**
+ * "how much does Bola owe (me)", "wetin Bola dey owe me": a balance question about one person.
+ * Must run before the command match, because "how much" is also a price command. It needs an
+ * owe verb at the end and a name between, so "how much rice mile12" still reaches price.
+ */
+function parseBalanceQuestion(raw: string[], norm: string[]): ParsedCommand | undefined {
+  const lead = BALANCE_LEADS.find((l) => startsWithAt(norm, 0, l));
+  if (!lead) return undefined;
+  let end = norm.length;
+  if (end > lead.length + 1 && norm[end - 1] === 'me') end -= 1;
+  for (let i = lead.length + 1; i <= end - 1; i++) {
+    const hit = VERBS.some((v) => v.kind === 'owe' && i + v.tokens.length === end && startsWithAt(norm, i, v.tokens));
+    if (hit) return { kind: 'book', name: raw.slice(lead.length, i).join(' ') };
+  }
+  return undefined;
+}
 // ---------- routing ----------
 
 const AMOUNT_LIKE = /^(n|ngn|\u20A6)?\d[\d,.]*k?$/;
@@ -156,8 +173,9 @@ const AMOUNT_LIKE = /^(n|ngn|\u20A6)?\d[\d,.]*k?$/;
  * step tool hands them to parseCommand.
  */
 export function routeIntent(text: string): IntentName {
-  const { norm } = tokenise(text);
+  const { raw, norm } = tokenise(text);
   if (AMOUNT_LIKE.test(norm.join(' '))) return 'choice';
+  if (parseBalanceQuestion(raw, norm)) return 'book';
   const cmd = matchCommand(norm);
   return cmd ? cmd.intent : 'freetext';
 }
@@ -305,6 +323,8 @@ function parseSentence(raw: string[], norm: string[]): ParsedCommand | undefined
 export function parseCommand(text: string): ParsedCommand {
   const { raw, norm } = tokenise(text);
   if (norm.length === 0) return { kind: 'unknown' };
+  const balance = parseBalanceQuestion(raw, norm);
+  if (balance) return balance;
   const cmd = matchCommand(norm);
   if (cmd) return parseCommandFirst(cmd.intent, raw, norm, cmd.len);
   return parseSentence(raw, norm) ?? { kind: 'unknown' };
