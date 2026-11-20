@@ -171,3 +171,8 @@ Every action Claude Code takes: date, what, why, files.
 - `pnpm test` (`FC_NUM_RUNS=1000`): 52 files, 587 tests pass (up from 564, new `parse.test.ts`); typecheck clean.
 - Live check through the standalone server: "how much does bola owe", "how much bola owe me", "bola balance", "wetin bola owe" all return Bola's balance; "price of garri" now asks which market with examples; "price rice mile12" and debt adding still work.
 - Files by Kiro: `apps/oja-ghost/src/{parse.ts,app.config.ts,copy.ts,tools.ts}`, `apps/oja-ghost/test/parse.test.ts`. Claude Code wrote none of it.
+
+## 2026-11-21: Browser check of the handset with the real Oja Ghost
+- Ran the handset dev server (added `.claude/launch.json`, a dev-server config only) and drove it in the built-in browser. The real app's USSD menu ("Oja Ghost: 1 Prices, 2 Debt book, 3 Exit") shows on the LCD, the scripted replay "Oja Ghost: prices and debt book" runs to the inbox with "New 5" messages, and the console shows no errors.
+- Not verified: typing a free-text message by hand. Keyboard input into the Compose screen did not register in my automated session (the screen stayed empty), which may be my driving of it rather than a bug, so a human should try Compose with the real keypad. The balance and price phrasings were verified over HTTP instead (see the parser fix entry).
+- Files: `.claude/launch.json`, `docs/claude-code-log.md`.
